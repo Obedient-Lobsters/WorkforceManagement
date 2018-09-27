@@ -5,14 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Departments\" />
-    <Folder Include="Views\Employees\" />
-    <Folder Include="Views\Computers\" />
+    <Folder Include="images\" />
+    <Folder Include="Views\Department\" />
+    <Folder Include="Views\Employee\" />
+    <Folder Include="Views\Computer\" />
   </ItemGroup>
 
 </Project>
