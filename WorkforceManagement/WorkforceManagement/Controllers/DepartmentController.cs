@@ -14,6 +14,8 @@ namespace WorkforceManagement.Controllers
     {
         private readonly IConfiguration _config;
 
+        //Author:Shu Sajid Purpose:These methods create connection
+        //to the database
         public DepartmentController(IConfiguration config)
         {
             _config = config;
@@ -44,27 +46,38 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
-        // GET: Department/Create
-        public ActionResult Create()
+        // Author:Shu Sajid Purpose: GET: Department/Create
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Department/Create
+        // Author:Shu Sajid Purpose: POST: Department/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("DepartmentName, ExpenseBudget")] Department department)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                string sql = $@"
+                    INSERT INTO Department
+                        ( DepartmentName, ExpenseBudget )
+                        VALUES
+                        ( '{department.DepartmentName}', 0 )
+                    ";
 
-                return RedirectToAction(nameof(Index));
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(department);
         }
 
         // GET: Department/Edit/5
