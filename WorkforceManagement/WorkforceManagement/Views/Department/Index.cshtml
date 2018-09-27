@@ -1,0 +1,39 @@
+﻿@*Author:Shu Sajid
+Purpose: View for Department Index*@
+
+@model IEnumerable<WorkforceManagement.Models.Department>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Departments</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DepartmentName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartmentName)
+            </td>
+            
+            <td>
+                
+                @Html.ActionLink("Details", "Details", new { id=item.DepartmentId })
+                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
