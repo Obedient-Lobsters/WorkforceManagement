@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="images\" />
     <Folder Include="Views\Department\" />
     <Folder Include="Views\Employee\" />
     <Folder Include="Views\Computer\" />

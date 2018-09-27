@@ -17,5 +17,13 @@ when the window pops up select ```Data``` underneath ```ASP.NET Core``` and choo
 then open ```SSMS``` and copy the contents of the ```Server name``` text box and paste where it says ```INSERT_DATABASE_CONNECTION_HERE```
 then replace ```INSERT_DATABASE_NAME``` with the name of your database that you've created. 
 
+## Starting this Project
+
+Clone the Obedient Lobsters WorkforceManagement repo onto your machine. ```cd``` into that directory and open the project in Visual Studio Code.
+Make sure the database is built on your local machine using the contents of ```BangazonDatabaseSeedBuild``` in the project root directory (see database setup above for instructions).
+Link Visual Studio Code to that database by going to ```View``` and selecting the ```SQL Server Object Explorer```. Open that up and press the ```add SQL server``` button (looks like a column with a green plus). Then select ```local``` and pick the option that matches your local server.
+
+If all went correctly, your database should be connected, and you can then run the project.
+To run the project, press the green "play" triangle that is above the code editor, roughly in the middle.
 
 
