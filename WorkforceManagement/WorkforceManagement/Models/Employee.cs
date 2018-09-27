@@ -12,9 +12,11 @@ namespace WorkforceManagement.Models
         public int EmployeeId { get; set; }
 
         [Required]
+        [Display(Name = "First name")]
         public string FirstName { get; set; }
 
         [Required]
+        [Display(Name = "Last name")]
         public string LastName { get; set; }
 
         [Required]
@@ -26,8 +28,21 @@ namespace WorkforceManagement.Models
         [Required]
         public int DepartmentId { get; set; }
 
+        [Display(Name = "Department")]
         public Department Department { get; set; }
 
+        [Display(Name = "Assigned Computer")]
         public Computer Computer { get; set; }
+
+        [Display(Name = "Employee Name")]
+        public string FullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
+        [Display(Name = "Assigned Training Programs")]
+        public List<TrainingProgram> TrainingPrograms { get; set; } = new List<TrainingProgram>();
     }
 }
