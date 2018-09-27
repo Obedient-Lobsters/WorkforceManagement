@@ -31,6 +31,8 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee
+        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they bolong to, and then send that information to the view that corresponds to the Employee model
+        // Author: William K. Kimball
         public async Task<IActionResult> Index()
         {
 
