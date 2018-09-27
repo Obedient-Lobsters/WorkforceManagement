@@ -54,18 +54,23 @@ namespace WorkforceManagement.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Employee employee)
         {
-            try
-            {
-                // TODO: Add insert logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            if (ModelState.IsValid)
             {
-                return View();
-            }
+                string sql = $@"
+                    INSERT INTO Instructor
+                        ( FirstName, LastName, StartDate, DepartmentId )
+                        VALUES
+                        (
+                             '{employee.FirstName}'
+                            , '{employee.LastName}'
+                            , '{employee.StartDate}'
+                            , '{employee.DepartmentId}'
+                        )
+                    ";
+            
         }
 
         // GET: Employee/Edit/5

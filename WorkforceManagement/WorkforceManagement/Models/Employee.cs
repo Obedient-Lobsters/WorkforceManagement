@@ -21,6 +21,9 @@ namespace WorkforceManagement.Models
         public string Email { get; set; }
 
         [Required]
+        public DateTime StartDate { get; set; }
+
+        [Required]
         public bool Supervisor { get; set; }
 
         [Required]
