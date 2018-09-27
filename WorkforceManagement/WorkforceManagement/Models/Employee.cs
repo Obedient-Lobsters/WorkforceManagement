@@ -29,5 +29,15 @@ namespace WorkforceManagement.Models
         public Department Department { get; set; }
 
         public Computer Computer { get; set; }
+
+        [Display(Name = "Employee Name")]
+        public string FullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
+
     }
 }

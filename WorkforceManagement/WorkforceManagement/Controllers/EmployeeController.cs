@@ -1,18 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
+using WorkforceManagement.Models;
 
 namespace WorkforceManagement.Controllers
 {
     public class EmployeeController : Controller
     {
-        // GET: Employee
-        public ActionResult Index()
+        private readonly IConfiguration _config;
+
+        public EmployeeController(IConfiguration config)
         {
-            return View();
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
+        // GET: Employee
+        public async Task<IActionResult> Index()
+        {
+
+            string sql = @"
+            SELECT
+                e.EmployeeId,
+                e.FirstName,
+                e.LastName,
+				e.Email,
+                d.DepartmentId,
+                d.DepartmentName
+            FROM Employee e
+            JOIN Department d ON e.DepartmentId = d.DepartmentId
+        ";
+
+            using (IDbConnection conn = Connection)
+            {
+                Dictionary<int, Employee> employees = new Dictionary<int, Employee>();
+
+                var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
+                        sql,
+                        (employee, department) => {
+                            if (!employees.ContainsKey(employee.EmployeeId))
+                            {
+                                employees[employee.EmployeeId] = employee;
+                            }
+                            employees[employee.EmployeeId].Department = department;
+                            return employee;
+                        }, splitOn: "EmployeeId, DepartmentId"
+                    );
+                return View(employees.Values);
+
+            }
         }
 
         // GET: Employee/Details/5
