@@ -32,7 +32,7 @@ namespace WorkforceManagement.Models
         public Department Department { get; set; }
 
         [Display(Name = "Assigned Computer")]
-        public Computer Computer { get; set; }
+        public Computer ComputerId { get; set; }
 
         [Display(Name = "Employee Name")]
         public string FullName

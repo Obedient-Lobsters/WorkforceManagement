@@ -2,7 +2,7 @@
 @model WorkforceManagement.Models.Employee
 
 @{
-    ViewData["Title"] = "Instructor Details";
+    ViewData["Title"] = "Employee Details";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -35,18 +35,18 @@
         </dd>
     </dl>    <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Computer)
+            @Html.DisplayNameFor(model => model.ComputerId)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Computer)
+            @Html.DisplayFor(model => model.ComputerId)
         </dd>
     </dl>
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Computer)
+            @Html.DisplayNameFor(model => model.TrainingPrograms)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Computer)
+            @Html.DisplayFor(model => model.TrainingPrograms)
         </dd>
     </dl>
 </div>
@@ -54,3 +54,6 @@
     <a asp-action="Edit" asp-route-id="@Model.EmployeeId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@*AUTHOR: Aaron Miller 
+PURPOSE: Details View for Employees*@
