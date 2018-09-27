@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
+using WorkforceManagement.Models.ViewModels;
 using System.Data.SqlClient;
 
 namespace WorkforceManagement.Controllers
@@ -45,6 +47,22 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
+        private async Task<SelectList> DepartmentList(int? selected)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                // Get all cohort data
+                List<Department> departments = (await conn.QueryAsync<Department>("SELECT Id, Name FROM Department")).ToList();
+
+                // Add a prompting cohort for dropdown
+                departments.Insert(0, new Department() { DepartmentId = 0, DepartmentName = "Select department..." });
+
+                // Generate SelectList from cohorts
+                var selectList = new SelectList(departments, "Id", "Name", selected);
+                return selectList;
+            }
+        }
+
         // GET: Employee/Create
         public ActionResult Create()
         {
@@ -52,27 +70,46 @@ namespace WorkforceManagement.Controllers
         }
 
         // POST: Employee/Create
+        //Author: Leah Gwin
+        //Purpose: For HR to be able to add a new employee 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Employee employee)
+        public async Task<IActionResult> Create(Employee employee)
         {
 
             if (ModelState.IsValid)
             {
                 string sql = $@"
-                    INSERT INTO Instructor
+                    INSERT INTO Employee
                         ( FirstName, LastName, StartDate, DepartmentId )
                         VALUES
-                        (
-                             '{employee.FirstName}'
+                        ( null 
+                            , '{employee.FirstName}'
                             , '{employee.LastName}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
                         )
                     ";
-            
-        }
 
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+
+            // ModelState was invalid, or saving the Employee data failed. Show the form again.
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT Id, Name FROM Department")).ToList();
+                ViewData["DepartmentId"] = await DepartmentList(department.DepartmentId);
+                return View(department);
+            }
+        }
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
         {
