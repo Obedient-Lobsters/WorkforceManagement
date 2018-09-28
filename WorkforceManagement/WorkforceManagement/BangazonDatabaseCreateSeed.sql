@@ -121,7 +121,7 @@ CREATE TABLE EmployeeTraining (
 CREATE TABLE EmployeeComputer (
   EmployeeComputerId  INTEGER NOT NULL PRIMARY KEY IDENTITY,
   DateAssigned        DATE NOT NULL,
-  DateReturned        DATE NOT NULL,
+  DateReturned        DATE,
   ComputerId          INTEGER NOT NULL,
   EmployeeId          INTEGER NOT NULL,
   CONSTRAINT FK_ComputerEmployee FOREIGN KEY(ComputerId)REFERENCES Computer(ComputerId),
