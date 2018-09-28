@@ -11,8 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Employees\" />
-    <Folder Include="Views\Computers\" />
+    <Folder Include="Views\Department\" />
+    <Folder Include="Views\Employee\" />
+    <Folder Include="Views\Computer\" />
   </ItemGroup>
 
 </Project>
