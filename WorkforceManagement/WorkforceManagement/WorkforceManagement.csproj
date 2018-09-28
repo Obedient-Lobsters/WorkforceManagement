@@ -11,8 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <Folder Include="Views\Department\" />
     <Folder Include="Views\Computer\" />
+=======
+    <Folder Include="Views\Employees\" />
+    <Folder Include="Views\Computers\" />
+>>>>>>> master
   </ItemGroup>
 
 </Project>
