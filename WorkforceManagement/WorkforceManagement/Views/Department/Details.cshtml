@@ -12,7 +12,7 @@
 <h2>Details</h2>
 
 <div>
-    <h4>@Html.DisplayNameFor(model => model.DepartmentName)</h4>
+    <h4>@Html.DisplayFor(model => model.DepartmentName)</h4>
     <hr />
     
     <h5>Employees</h5>
@@ -63,8 +63,8 @@
                         @Html.DisplayFor(modelItem => item.DepartmentId)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id=item.EmployeeId  }) |
-                        @Html.ActionLink("Details", "Details", new {  id=item.EmployeeId }) 
+                        @Html.ActionLink("Edit", "Edit", "Employee", new { id=item.EmployeeId  }, null) |
+                        @Html.ActionLink("Details", "Details", "Employee", new {  id=item.EmployeeId }, null) 
                     </td>
                 </tr>
             }
@@ -72,6 +72,5 @@
     </table>
     </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.DepartmentId }) |
     <a asp-action="Index">Back to List</a>
 </div>
