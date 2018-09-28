@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
 
+
 namespace WorkforceManagement.Controllers
 {
     public class DepartmentController : Controller
@@ -27,11 +28,18 @@ namespace WorkforceManagement.Controllers
             {
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
+
         }
-        // GET: Department
-        public ActionResult Index()
+        // Author: Shu Sajid Purpose: GET all Departments
+        public async Task<IActionResult> Index()
         {
-            return View();
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Department> departments = await conn.QueryAsync<Department>(
+                    "SELECT DepartmentId, DepartmentName, ExpenseBudget FROM Department;"
+                );
+                return View(departments);
+            }
         }
 
         // GET: Department/Details/5
