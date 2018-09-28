@@ -6,12 +6,12 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.Sqlite;
+//using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
 
-namespace Workforce.Models.ViewModels
+namespace WorkforceManagement.Models.ViewModels
 {
     public class EmployeeEditViewModel
     {
@@ -20,8 +20,8 @@ namespace Workforce.Models.ViewModels
         [Display(Name = "Current Training Programs")]
         public List<SelectListItem> TrainingPrograms { get; }
 
-        [Display(Name = "Current Exercises")]
-        public List<SelectListItem> Exercises { get; }
+        [Display(Name = "Current Department")]
+        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
 
         private readonly IConfiguration _config;
 
@@ -39,67 +39,52 @@ namespace Workforce.Models.ViewModels
         {
             _config = config;
 
-            string sql = $@"SELECT Id, Name FROM Cohort";
+            string sql = $@"SELECT DepartmentId, DepartmentName FROM Department";
 
-            //using (IDbConnection conn = Connection) {
-            //    List<Cohort> cohorts = (conn.Query<Cohort> (sql)).ToList();
 
-            //    this.Cohorts = cohorts
-            //        .Select(li => new SelectListItem {
-            //            Text = li.Name,
-            //            Value = li.Id.ToString()
-            //        }).ToList();
-            //}
+            string TrainingProgramSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
 
-            string ExerciseSql = $@" SELECT e.Id, e.Name, e.Language FROM Exercise e
-;";
-
-            //string StudExerciseSql = $@"SELECT se.Id, s.Id, e.Id
-            //                            FROM StudentExercise se
-            //                            JOIN Student s ON se.StudentId = s.Id
-            //                            JOIN Exercise e ON se.ExerciseId = e.Id
-            //                            ";
 
             using (IDbConnection conn = Connection)
             {
-                List<Cohort> cohorts = (conn.Query<Cohort>(sql)).ToList();
+                List<Department> departments = (conn.Query<Department>(sql)).ToList();
 
 
 
-                this.Cohorts = cohorts
+                this.Departments = departments
                     .Select(li => new SelectListItem
                     {
-                        Text = li.Name,
-                        Value = li.Id.ToString()
+                        Text = li.DepartmentName,
+                        Value = li.DepartmentId.ToString()
                     }).ToList();
 
                 // Add a prompt so that the <select> element isn't blank
-                this.Cohorts.Insert(0, new SelectListItem
+                this.Departments.Insert(0, new SelectListItem
                 {
-                    Text = "Choose cohort...",
+                    Text = "Choose Department...",
                     Value = "0"
                 });
 
-                IEnumerable<Exercise> exercises = (conn.Query<Exercise>(ExerciseSql)).ToList();
+                //IEnumerable<Exercise> exercises = (conn.Query<Exercise>(ExerciseSql)).ToList();
 
-                this.Exercises = exercises
-                .Select(li => new SelectListItem
-                {
-                    Text = $"{li.Name}, {li.Language}",
-                    Value = li.Id.ToString()
-                }).ToList();
-
-                // Add a prompt so that the <select> element isn't blank
-                this.Exercises.Insert(0, new SelectListItem
-                {
-                    Text = "Choose exercise...",
-                    Value = "0"
-                });
-                //List<Exercise> Assignedexercises = (conn.Query<Exercise>(StudExerciseSql)).ToList();
-                //this.Student.AssignedExercises = Assignedexercises.Select(li => new Exercise
+                //this.Exercises = exercises
+                //.Select(li => new SelectListItem
                 //{
-                //    Id = li.Id
+                //    Text = $"{li.Name}, {li.Language}",
+                //    Value = li.Id.ToString()
                 //}).ToList();
+
+                //// Add a prompt so that the <select> element isn't blank
+                //this.Exercises.Insert(0, new SelectListItem
+                //{
+                //    Text = "Choose exercise...",
+                //    Value = "0"
+                //});
+                ////List<Exercise> Assignedexercises = (conn.Query<Exercise>(StudExerciseSql)).ToList();
+                ////this.Student.AssignedExercises = Assignedexercises.Select(li => new Exercise
+                ////{
+                ////    Id = li.Id
+                ////}).ToList();
             }
         }
     }
