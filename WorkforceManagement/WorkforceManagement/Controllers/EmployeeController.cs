@@ -68,20 +68,30 @@ namespace WorkforceManagement.Controllers
 			ON e.EmployeeId= et.EmployeeId
 			JOIN TrainingProgram tp 
 			ON et.TrainingProgramId= tp.TrainingProgramId";
-     
+
 
             using (IDbConnection conn = Connection)
             {
-
-                Employee employee
-                    = (await conn.QueryAsync<Employee>(sql)).ToList().Single();
-
-                if (employee == null)
-                {
-                    return NotFound();
-                }
-
-                return View(employee);
+                Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
+                var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
+                   sql,
+                   (employee, department, computer, trainingProgram) =>
+                   {
+                       Employee employeeEntry;
+                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                       {
+                    employeeEntry = employee;
+                           employeeEntry.Computer = computer;
+                           employeeEntry.Department = department;
+                 
+                    employeeEntry.TrainingPrograms = new List<TrainingProgram>();
+                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                       }
+                employeeEntry.TrainingPrograms.Add(trainingProgram);
+                       return employeeEntry;
+                   }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
+                   );
+                return View(employeesQuery.Distinct().First());
             }
         }
 
@@ -167,4 +177,3 @@ namespace WorkforceManagement.Controllers
         //    }
     }
     }
-}
