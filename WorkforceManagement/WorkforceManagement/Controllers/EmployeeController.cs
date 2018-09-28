@@ -51,22 +51,26 @@ namespace WorkforceManagement.Controllers
         {
             using (IDbConnection conn = Connection)
             {
-                // Get all cohort data
+                // Get all department data
                 List<Department> departments = (await conn.QueryAsync<Department>("SELECT Id, Name FROM Department")).ToList();
 
-                // Add a prompting cohort for dropdown
+                // Add a prompting department for dropdown
                 departments.Insert(0, new Department() { DepartmentId = 0, DepartmentName = "Select department..." });
 
-                // Generate SelectList from cohorts
-                var selectList = new SelectList(departments, "Id", "Name", selected);
+                // Generate SelectList from department
+                var selectList = new SelectList(departments, "DepartmentId", "DepartmentName", selected);
                 return selectList;
             }
         }
 
         // GET: Employee/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            using (IDbConnection conn = Connection)
+            {
+                ViewData["DepartmentId"] = await DepartmentList(null);
+                return View();
+            }
         }
 
         // POST: Employee/Create
