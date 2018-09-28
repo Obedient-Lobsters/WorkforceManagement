@@ -1,18 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using WorkforceManagement.Models;
+using System.Data.SqlClient;
 
 namespace WorkforceManagement.Controllers
 {
     public class DepartmentController : Controller
     {
-        // GET: Department
-        public ActionResult Index()
+        private readonly IConfiguration _config;
+
+        public DepartmentController(IConfiguration config)
         {
-            return View();
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+
+        }
+        // Author: Shu Sajid Purpose: GET all Departments
+        public async Task<IActionResult> Index()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Department> departments = await conn.QueryAsync<Department>(
+                    "SELECT DepartmentId, DepartmentName, ExpenseBudget FROM Department;"
+                );
+                return View(departments);
+            }
         }
 
         // GET: Department/Details/5
