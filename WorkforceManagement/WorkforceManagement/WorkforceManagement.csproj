@@ -10,13 +10,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
+
     <Folder Include="Views\Department\" />
 <<<<<<< HEAD
 =======
     <Folder Include="Views\Employee\" />
 >>>>>>> master
     <Folder Include="Views\Computer\" />
+
   </ItemGroup>
 
 </Project>

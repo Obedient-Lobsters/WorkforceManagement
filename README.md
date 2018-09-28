@@ -38,6 +38,9 @@ The great folks in the Human Resources Department can view all Departments when 
 ###Add A New Department
 Human Resources can add a new department by clicking Create New link on the View all Departments view. The link will show a form with an input field requesting the new department name and a submit button. Once submitted they will be rerouted back to view all department page and the new department is also listed.
 
+##### Details
+    Click on the word details on and individual department to see a list of that department's employees.
+
 ## Employee 
 
 ## Employee Index/List View
