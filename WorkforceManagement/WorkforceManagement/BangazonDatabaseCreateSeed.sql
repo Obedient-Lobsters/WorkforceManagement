@@ -342,6 +342,18 @@ VALUES(
 '2018/07/12', 
 '2018/07/13', 
 5);
+INSERT INTO TrainingProgram(ProgramName,StartDate,EndDate, MaximumAttendees)
+VALUES(  
+ 'Enjoying C#', 
+'2019/07/12',
+'2019/09/12',  
+5);
+INSERT INTO TrainingProgram(ProgramName,StartDate,EndDate, MaximumAttendees)
+VALUES(  
+ 'What Even is F#', 
+'2019/12/01', 
+'2019/12/31', 
+12);
 INSERT INTO Department(DepartmentName,ExpenseBudget)
 VALUES( 
  'Sales', 
@@ -363,6 +375,16 @@ VALUES(
 '2017/02/14', 
 '2018/03/01', 
 3,
+3);
+INSERT INTO EmployeeComputer(DateAssigned,EmployeeId,ComputerId)
+VALUES(  
+'2013/02/14',  
+2,
+1);
+INSERT INTO EmployeeComputer(DateAssigned,EmployeeId,ComputerId)
+VALUES(  
+'2010/04/20',  
+1,
 3);
 INSERT INTO Customer(FirstName,LastName,Email, Address,City,State,AcctCreationDate,LastLogin)
 VALUES( 
