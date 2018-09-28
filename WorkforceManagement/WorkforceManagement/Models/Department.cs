@@ -12,7 +12,6 @@ namespace WorkforceManagement.Models
 
         [Required]
         [Display(Name = "Departments")]
-
         public string DepartmentName { get; set; }
         public int ExpenseBudget { get; set; }
 
