@@ -25,6 +25,7 @@ namespace WorkforceManagement.Controllers
             {
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
+
         }
         // Author: Shu Sajid Purpose: GET all Departments
         public async Task<IActionResult> Index()
