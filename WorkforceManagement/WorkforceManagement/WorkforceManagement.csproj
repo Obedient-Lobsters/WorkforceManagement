@@ -12,10 +12,7 @@
 
 
     <Folder Include="Views\Department\" />
-<<<<<<< HEAD
-=======
     <Folder Include="Views\Employee\" />
->>>>>>> master
     <Folder Include="Views\Computer\" />
 
   </ItemGroup>
