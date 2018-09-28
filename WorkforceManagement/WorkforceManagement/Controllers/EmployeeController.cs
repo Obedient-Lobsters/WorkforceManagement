@@ -8,10 +8,9 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
-using WorkforceManagement.Models.ViewModels;
+//using WorkforceManagement.Models.ViewModels;
 using System.Data.SqlClient;
 
 namespace WorkforceManagement.Controllers
@@ -109,9 +108,9 @@ namespace WorkforceManagement.Controllers
             // ModelState was invalid, or saving the Employee data failed. Show the form again.
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT Id, Name FROM Department")).ToList();
-                ViewData["DepartmentId"] = await DepartmentList(department.DepartmentId);
-                return View(department);
+                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
+                ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
+                return View(employee);
             }
         }
         // GET: Employee/Edit/5
