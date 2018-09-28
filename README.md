@@ -25,3 +25,11 @@ Link Visual Studio Code to that database by going to ```View``` and selecting th
 
 If all went correctly, your database should be connected, and you can then run the project.
 To run the project, press the green "play" triangle that is above the code editor, roughly in the middle.
+
+
+## Employee 
+
+---
+
+## Employee Index/List View
+    To see the Employee Index view, click on the Employee tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for First Name Last Name and Department Name. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Employee, you should see a hyperlink for ```Detail``` and ```Edit```. Above the First Name column, there should be a hyperlink for ```Create New```. 
