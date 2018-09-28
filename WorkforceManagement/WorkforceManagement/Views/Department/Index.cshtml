@@ -1,13 +1,21 @@
+<<<<<<< HEAD
 ﻿@*Author:Shu Sajid
 Purpose: View for Department Index*@
 
 @model IEnumerable<WorkforceManagement.Models.Department>
+=======
+﻿@model IEnumerable<WorkforceManagement.Models.Department>
+>>>>>>> master
 
 @{
     ViewData["Title"] = "Index";
 }
 
+<<<<<<< HEAD
 <h2>Departments</h2>
+=======
+<h2>Index</h2>
+>>>>>>> master
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,15 +23,28 @@ Purpose: View for Department Index*@
 <table class="table">
     <thead>
         <tr>
+<<<<<<< HEAD
             <th>
                 @Html.DisplayNameFor(model => model.DepartmentName)
             </th>
+=======
+            
+            <th>
+                @Html.DisplayNameFor(model => model.DepartmentName)
+            </th>
+            
+            
+>>>>>>> master
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> master
             <td>
                 @Html.DisplayFor(modelItem => item.DepartmentName)
             </td>

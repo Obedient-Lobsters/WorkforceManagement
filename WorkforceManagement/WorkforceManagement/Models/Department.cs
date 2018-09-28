@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace WorkforceManagement.Models
 {
     public class Department
@@ -13,6 +12,7 @@ namespace WorkforceManagement.Models
 
         [Required]
         [Display(Name = "Departments")]
+
         public string DepartmentName { get; set; }
         public int ExpenseBudget { get; set; }
 
