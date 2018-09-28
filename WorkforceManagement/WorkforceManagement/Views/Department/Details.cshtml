@@ -1,0 +1,77 @@
+﻿@*Author: Evan Lusky
+    This is the details template for Departments.  I used the list template for Employees to list all employees.
+    The controller passes a Department object with a list of employees which are referenced in the
+    list template for each loop.*@
+
+@model WorkforceManagement.Models.Department
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>@Html.DisplayNameFor(model => model.DepartmentName)</h4>
+    <hr />
+    
+    <h5>Employees</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Employee ID
+                </th>
+                <th>
+                    First Name
+                </th>
+                <th>
+                    Last Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Supervisor?
+                </th>
+                <th>
+                    Department ID
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Employees)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supervisor)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartmentId)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.EmployeeId  }) |
+                        @Html.ActionLink("Details", "Details", new {  id=item.EmployeeId }) 
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DepartmentId }) |
+    <a asp-action="Index">Back to List</a>
+</div>
