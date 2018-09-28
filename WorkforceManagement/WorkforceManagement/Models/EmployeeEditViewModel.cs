@@ -21,7 +21,7 @@ namespace WorkforceManagement.Models.ViewModels
         public List<SelectListItem> TrainingPrograms { get; }
 
         [Display(Name = "Current Department")]
-        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> Departments { get; }
 
         private readonly IConfiguration _config;
 

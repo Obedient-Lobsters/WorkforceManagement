@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using WorkforceManagement.Models;
+using WorkforceManagement.Models.ViewModels;
 
 namespace WorkforceManagement.Controllers
 {
@@ -97,26 +98,103 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        //Edit Employee
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+                SELECT
+                    e.EmployeeId,
+                    e.FirstName,
+                    e.LastName,
+                    d.DepartmentId,
+                    d.DepartmentName
+                FROM Employee e
+                JOIN Department d on e.DepartmentId = d.DepartmentId
+                WHERE e.EmployeeId = {id}";
+
+            string exerciseSql = $@"
+                    SELECT
+                    s.Id,
+                    s.FirstName,
+                    s.LastName,
+                    s.SlackHandle,
+                    s.CohortId,
+                    c.Id,
+                    c.Name,
+					e.Id,
+					e.Name,
+					e.Language
+                FROM Student s
+                JOIN Cohort c on s.CohortId = c.Id
+				JOIN StudentExercise se ON s.Id = se.StudentId
+				JOIN Exercise e ON se.ExerciseId = e.Id
+                WHERE s.Id = {id}";
+
+            using (IDbConnection conn = Connection)
+            {
+                EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
+
+                model.Employee = (await conn.QueryAsync<Employee, Department, Employee>(
+                    sql,
+                    (employee, department) => {
+                        employee.Department = department;
+                        return employee;
+                    }, splitOn: "EmployeeId, DepartmentId"
+                )).Single();
+
+                //model.Employee.Tra = (await conn.QueryAsync<Student, Exercise, Exercise>(
+                //    exerciseSql,
+                //    (student, exercise) =>
+                //    {
+                //        student.AssignedExercises.Add(exercise);
+                //        return exercise;
+                //    }
+                //)).ToList();
+
+                //model.SelectedExerciseIds = model.Student.AssignedExercises.Select(exercise => { exercise.Id } ;);
+
+
+
+                return View(model);
+            }
         }
 
-        // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, EmployeeEditViewModel model)
         {
-            try
+            if (id != model.Employee.EmployeeId)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            if (ModelState.IsValid)
             {
-                return View();
+                string sql = $@"
+                UPDATE Employee
+                SET FirstName = '{model.Employee.FirstName}',
+                    LastName = '{model.Employee.LastName}',
+                WHERE Id = {id}";
+
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    throw new Exception("No rows affected");
+                }
+            }
+            else
+            {
+                return new StatusCodeResult(StatusCodes.Status406NotAcceptable);
             }
         }
 
