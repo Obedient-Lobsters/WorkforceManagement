@@ -31,7 +31,7 @@ To run the project, press the green "play" triangle that is above the code edito
 ## Departments
 
 ###View All
-The great folks in the Human Resources Department can view all Departments when the Department Naviagation Link is clicked.
+The great folks in the Human Resources Department can view all Departments when the Department Naviagation Link is clicked. The Department view shows links for "Create new Department" under the page title and "details" link to the right of each department.
 
 ###Add A New Department
 Human Resources can add a new department by clicking Create New link on the View all Departments view. The link will show a form with an input field requesting the new department name and a submit button. Once submitted they will be rerouted back to view all department page and the new department is also listed.
