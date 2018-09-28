@@ -25,3 +25,8 @@ Link Visual Studio Code to that database by going to ```View``` and selecting th
 
 If all went correctly, your database should be connected, and you can then run the project.
 To run the project, press the green "play" triangle that is above the code editor, roughly in the middle.
+
+### 7. Department
+
+##### Details
+    Click on the word details on and individual department to see a list of that department's employees.
