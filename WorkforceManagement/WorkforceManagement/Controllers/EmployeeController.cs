@@ -46,16 +46,29 @@ namespace WorkforceManagement.Controllers
 				d.DepartmentId,
 				d.DepartmentName,
 				ec.EmployeeComputerId,
+				ec.EmployeeId,
+				ec.ComputerId,
 				c.ComputerId,
 				c.Manufacturer,
-				c.ModelName
-				
+				c.ModelName,
+				et.EmployeeId,
+				et.TrainingProgramId, 
+				tp.TrainingProgramId,
+				tp.ProgramName,
+				tp.StartDate,
+				tp.EndDate
             FROM Employee e
             JOIN Department d 
-			ON e.DepartmentId= d.DepartmentId
-			JOIN 
-			ON
-            WHERE e.EmployeeId = EmployeeId"
+			ON e.DepartmentId = d.DepartmentId
+			JOIN EmployeeComputer ec
+			ON e.EmployeeId= ec.EmployeeId
+			JOIN Computer c 
+			ON ec.ComputerId= c.ComputerId
+			JOIN EmployeeTraining et 
+			ON e.EmployeeId= et.EmployeeId
+			JOIN TrainingProgram tp 
+			ON et.TrainingProgramId= tp.TrainingProgramId";
+     
 
             using (IDbConnection conn = Connection)
             {
