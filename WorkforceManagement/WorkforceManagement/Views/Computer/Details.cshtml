@@ -1,0 +1,67 @@
+﻿@*Author:Shu Sajid
+  Purpose:This View is based from the computer model and shows details for one computer.
+    A delete link will need to be add once delete method in controller is created*@
+@model WorkforceManagement.Models.Computer
+
+@{
+    ViewData["Title"] = "Computer Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Computer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ComputerId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ComputerId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DatePurchased)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DatePurchased)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateDecommissioned)
+        </dt>
+        
+            @{ 
+                
+                if (@Html.DisplayFor(model => model.DateDecommissioned) == null) {
+                <dd> 
+                    Still in Service
+                </dd>
+                }
+                else
+                {<dd>
+                    @Html.DisplayFor(model => model.DateDecommissioned)
+                </dd>}
+                    }
+                
+        <dt>
+            @Html.DisplayNameFor(model => model.Working)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Working)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ModelName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ModelName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Manufacturer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Manufacturer)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

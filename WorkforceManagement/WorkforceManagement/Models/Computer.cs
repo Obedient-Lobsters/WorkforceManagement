@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//Author:Shu Sajid 
+//Purpose:Model for Computer Table
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WorkforceManagement.Models
 {
@@ -12,16 +11,18 @@ namespace WorkforceManagement.Models
         public int ComputerId { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
+        [DataType(DataType.Date), Display(Name="Date of Purchase")]
         public DateTime DatePurchased { get; set; }
 
-
+        [Display(Name = "Date Decommissioned")]
         public DateTime? DateDecommissioned { get; set; }
 
         [Required]
+        [Display (Name = "Operational")]
         public bool Working { get; set; }
 
         [Required]
+        [Display(Name = "Model")]
         public string ModelName { get; set; }
 
         [Required]
