@@ -7,7 +7,7 @@
     ViewData["Title"] = "Computer Details";
 }
 
-<h2>Details</h2>
+<h2>Details of Computer</h2>
 
 <div>
     <h4>Computer</h4>
@@ -28,23 +28,15 @@
         <dt>
             @Html.DisplayNameFor(model => model.DateDecommissioned)
         </dt>
-        
-            @{ 
-                
-                if (@Html.DisplayFor(model => model.DateDecommissioned) == null) {
-                <dd> 
-                    Still in Service
-                </dd>
-                }
-                else
-                {<dd>
-                    @Html.DisplayFor(model => model.DateDecommissioned)
-                </dd>}
-                    }
-                
+
+        <dd>
+            @Html.DisplayFor(model => model.DateDecommissioned)
+        </dd>
+                   
         <dt>
             @Html.DisplayNameFor(model => model.Working)
         </dt>
+
         <dd>
             @Html.DisplayFor(model => model.Working)
         </dd>

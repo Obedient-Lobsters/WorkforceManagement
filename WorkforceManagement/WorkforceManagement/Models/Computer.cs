@@ -8,13 +8,14 @@ namespace WorkforceManagement.Models
     public class Computer
     {
         [Key]
+        [Display(Name = "Computer Id #")]
         public int ComputerId { get; set; }
 
         [Required]
         [DataType(DataType.Date), Display(Name="Date of Purchase")]
         public DateTime DatePurchased { get; set; }
 
-        [Display(Name = "Date Decommissioned")]
+        [Display(Name = "Date Decommissioned"),DisplayFormat(NullDisplayText = "In Service", ApplyFormatInEditMode = true)]
         public DateTime? DateDecommissioned { get; set; }
 
         [Required]

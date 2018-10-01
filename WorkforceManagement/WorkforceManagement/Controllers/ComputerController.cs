@@ -58,6 +58,7 @@ namespace WorkforceManagement.Controllers
             using (IDbConnection conn = Connection)
             {
                 Computer computerQuery = await conn.QuerySingleAsync<Computer>(sql);
+
                 if (computerQuery == null)
                 {
                     return NotFound();
