@@ -23,6 +23,7 @@ namespace WorkforceManagement.Models
         public string Email { get; set; }
 
         [Required]
+        [DataType(DataType.Date), Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
 
         [Required]
