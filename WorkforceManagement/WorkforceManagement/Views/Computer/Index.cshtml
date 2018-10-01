@@ -34,13 +34,12 @@
                 @Html.DisplayFor(modelItem => item.Working)
             </th>
             <td>
-                @Html.DisplayFor(modelItem => item.ModelName)
+                @Html.ActionLink($"{item.ModelName}", "Details", new { id = item.ComputerId })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Manufacturer)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.ComputerId }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.ComputerId })
             </td>
         </tr>
