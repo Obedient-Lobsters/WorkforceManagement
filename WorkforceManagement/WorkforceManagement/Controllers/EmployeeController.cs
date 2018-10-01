@@ -114,70 +114,52 @@ namespace WorkforceManagement.Controllers
                     e.LastName,
                     e.Email,
                     e.Supervisor,
-                    e.StartDate,
-                    e.EndDate,
                     e.DepartmentId,
                     d.DepartmentId,
-                    d.DepartmentName
-                FROM Employee e
-                JOIN Department d on e.DepartmentId = d.DepartmentId
-                WHERE e.EmployeeId = {id}";
-
-            string compSql = $@"
-                SELECT
-                    e.EmployeeId,
-                    e.FirstName,
-                    e.LastName,
-                    e.Email,
-                    e.Supervisor,
-                    e.StartDate,
-                    e.EndDate,
+                    d.DepartmentName,
                     c.ComputerId,
                     c.ModelName,
-                    c.Manufacturer
+                    c.Manufacturer,
+                    ec.EmployeeId,
+                    ec.ComputerId
                 FROM Employee e
-				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
-                JOIN Computer c on ec.ComputerId = c.ComputerId
-                WHERE e.EmployeeId = {id}
-                ";
+                JOIN Department d on e.DepartmentId = d.DepartmentId
+				LEFT JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
+                LEFT JOIN Computer c on ec.ComputerId = c.ComputerId
+                WHERE e.EmployeeId = {id}";
 
-            string exerciseSql = $@"
-                    SELECT
-                    s.Id,
-                    s.FirstName,
-                    s.LastName,
-                    s.SlackHandle,
-                    s.CohortId,
-                    c.Id,
-                    c.Name,
-					e.Id,
-					e.Name,
-					e.Language
-                FROM Student s
-                JOIN Cohort c on s.CohortId = c.Id
-				JOIN StudentExercise se ON s.Id = se.StudentId
-				JOIN Exercise e ON se.ExerciseId = e.Id
-                WHERE s.Id = {id}";
+    //        string exerciseSql = $@"
+    //                SELECT
+    //                s.Id,
+    //                s.FirstName,
+    //                s.LastName,
+    //                s.SlackHandle,
+    //                s.CohortId,
+    //                c.ComputerId,
+    //                c.ModelName,
+				//	e.Id,
+				//	e.Name,
+				//	e.Language
+    //            FROM Student s
+    //            JOIN Cohort c on s.CohortId = c.Id
+				//JOIN StudentExercise se ON s.Id = se.StudentId
+				//JOIN Exercise e ON se.ExerciseId = e.Id
+    //            WHERE s.Id = {id}";
 
             using (IDbConnection conn = Connection)
             {
                 EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
 
-                model.Employee = (await conn.QueryAsync<Employee, Department, Employee>(
+                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
                     sql,
-                    (employee, department) => {
+                    (employee, department, computer) =>
+                    {
                         employee.Department = department;
+                        employee.Computer = computer;
                         return employee;
-                    }, splitOn: "EmployeeId, DepartmentId"
+                    }, splitOn: "EmployeeId, DepartmentId, ComputerId"
                 )).Single();
 
-                model.Employee = (await conn.QueryAsync<Employee, Computer, Employee>(
-                compSql,
-                (employee, computer) => {
-                     employee.Computer = computer;
-                     return employee;
-                }, splitOn: "EmployeeId, ComputerId"
-                )).Single();
 
                 //model.Employee.Tra = (await conn.QueryAsync<Student, Exercise, Exercise>(
                 //    exerciseSql,
@@ -211,7 +193,8 @@ namespace WorkforceManagement.Controllers
                 UPDATE Employee
                 SET
                     LastName = '{model.Employee.LastName}',
-                    DepartmentId = '{model.Employee.DepartmentId}'
+                    DepartmentId = '{model.Employee.DepartmentId}',
+                    ComputerId = '{model.Employee.ComputerId}'
                 WHERE EmployeeId = {id}";
 
                 using (IDbConnection conn = Connection)

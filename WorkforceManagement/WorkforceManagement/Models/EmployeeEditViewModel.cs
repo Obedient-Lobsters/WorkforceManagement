@@ -44,7 +44,7 @@ namespace WorkforceManagement.Models.ViewModels
 
             string sql = $@"SELECT DepartmentId, DepartmentName FROM Department";
 
-            string compSql = $@"SELECT ComputerId, ComputerName FROM Computer";
+            string compSql = $@"SELECT ComputerId, ModelName FROM Computer";
 
 
             string TrainingProgramSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
@@ -70,7 +70,7 @@ namespace WorkforceManagement.Models.ViewModels
                     Value = "0"
                 });
 
-                List<Computer> computers = (conn.Query<Computer>(sql)).ToList();
+                List<Computer> computers = (conn.Query<Computer>(compSql)).ToList();
 
 
 
@@ -82,7 +82,7 @@ namespace WorkforceManagement.Models.ViewModels
                     }).ToList();
 
                 // Add a prompt so that the <select> element isn't blank
-                this.Departments.Insert(0, new SelectListItem
+                this.Computers.Insert(0, new SelectListItem
                 {
                     Text = "Choose Computer...",
                     Value = "0"

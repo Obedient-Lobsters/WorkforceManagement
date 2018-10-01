@@ -28,9 +28,9 @@ namespace WorkforceManagement.Models
         [Required]
         public int DepartmentId { get; set; }
 
-        public int ComputerId { get; set; }
-
         public Department Department { get; set; }
+
+        public int ComputerId { get; set; }
 
         public Computer Computer { get; set; }
 
