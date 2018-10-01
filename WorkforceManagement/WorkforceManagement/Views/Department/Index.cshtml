@@ -1,5 +1,5 @@
-﻿@*Author:Shu Sajid
-Purpose: View for Department Index*@
+@*Author:Shu Sajid
+    Purpose: View for Department Index*@
 
 @model IEnumerable<WorkforceManagement.Models.Department>
 @{
@@ -20,18 +20,19 @@ Purpose: View for Department Index*@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartmentName)
-            </td>
-            
-            <td>
-                
-                @Html.ActionLink("Details", "Details", new { id=item.DepartmentId })
-                
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartmentName)
+                </td>
+
+                <td>
+
+                    @Html.ActionLink("Details", "Details", new { id = item.DepartmentId })
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
