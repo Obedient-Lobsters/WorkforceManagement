@@ -36,7 +36,7 @@ namespace WorkforceManagement.Controllers
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Computer> computers = await conn.QueryAsync<Computer>(
-                    "select ModelName, Manufacturer, Working from Computer;"
+                    "select ComputerId, ModelName, Manufacturer, Working from Computer;"
                 );
                 return View(computers);
             }
