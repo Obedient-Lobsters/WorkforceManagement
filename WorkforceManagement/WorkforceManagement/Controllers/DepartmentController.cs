@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
-using System.Data.SqlClient;
+
 
 namespace WorkforceManagement.Controllers
 {
@@ -42,9 +45,57 @@ namespace WorkforceManagement.Controllers
         }
 
         // GET: Department/Details/5
-        public ActionResult Details(int id)
+        // Author: Evan Lusky
+        // This provides the Details view with a Department object with the DepartmentId {id}
+        // This method also adds all employees of that department to the object in the employees list property.
+        // Since this dapper code returns an ienumerable and the Details view needs a single Department object we use Single() on the query.
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+            select
+                d.DepartmentId,
+                d.DepartmentName,
+                d.ExpenseBudget,
+				e.EmployeeId,
+				e.FirstName,
+				e.LastName,
+				e.Email,
+				e.Supervisor,
+				e.DepartmentId
+            from Department as d
+            join Employee as e ON e.DepartmentId = d.DepartmentId
+			where d.DepartmentId = {id}";
+
+            using (IDbConnection conn = Connection)
+            {
+
+                Dictionary<int, Department> departmentEmployees = new Dictionary<int, Department>();
+
+                var departmentsQuery = await conn.QueryAsync<Department, Employee, Department>(
+                    sql,
+                    (department, employee) =>
+                    {
+                        Department departmentEntry;
+
+                        if (!departmentEmployees.TryGetValue(department.DepartmentId, out departmentEntry))
+                        {
+                            departmentEntry = department;
+                            departmentEntry.Employees = new List<Employee>();
+                            departmentEmployees.Add(departmentEntry.DepartmentId, departmentEntry);
+                        }
+
+                        departmentEntry.Employees.Add(employee);
+                        return departmentEntry;
+                    }, splitOn: "DepartmentId, EmployeeId"
+                    );
+                return View(departmentsQuery.Distinct().First());
+
+            }
         }
 
         // Author:Shu Sajid Purpose: GET: Department/Create
