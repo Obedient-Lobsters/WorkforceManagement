@@ -54,7 +54,8 @@ namespace WorkforceManagement.Controllers
 
                 var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
                         sql,
-                        (employee, department) => {
+                        (employee, department) =>
+                        {
                             if (!employees.ContainsKey(employee.EmployeeId))
                             {
                                 employees[employee.EmployeeId] = employee;
@@ -109,7 +110,8 @@ namespace WorkforceManagement.Controllers
 			JOIN EmployeeTraining et 
 			ON e.EmployeeId= et.EmployeeId
 			JOIN TrainingProgram tp 
-			ON et.TrainingProgramId= tp.TrainingProgramId";
+			ON et.TrainingProgramId= tp.TrainingProgramId
+            WHERE e.EmployeeId= { id }";
 
 
             using (IDbConnection conn = Connection)
@@ -122,100 +124,19 @@ namespace WorkforceManagement.Controllers
                        Employee employeeEntry;
                        if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
                        {
-                    employeeEntry = employee;
+                           employeeEntry = employee;
                            employeeEntry.Computer = computer;
                            employeeEntry.Department = department;
-                 
-                    employeeEntry.TrainingPrograms = new List<TrainingProgram>();
+
+                           employeeEntry.TrainingPrograms = new List<TrainingProgram>();
                            EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
                        }
-                employeeEntry.TrainingPrograms.Add(trainingProgram);
+                       employeeEntry.TrainingPrograms.Add(trainingProgram);
                        return employeeEntry;
                    }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
                    );
                 return View(employeesQuery.Distinct().First());
             }
         }
-
-
-        //// GET: Employee
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
-        //// GET: Employee/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
-
-        //// GET: Employee/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //// POST: Employee/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: Employee/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: Employee/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add update logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: Employee/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: Employee/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add delete logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
     }
-    }
+}
