@@ -112,6 +112,10 @@ namespace WorkforceManagement.Controllers
                     e.EmployeeId,
                     e.FirstName,
                     e.LastName,
+                    e.Email,
+                    e.Supervisor,
+                    e.StartDate,
+                    e.EndDate,
                     e.DepartmentId,
                     d.DepartmentId,
                     d.DepartmentName
@@ -179,10 +183,10 @@ namespace WorkforceManagement.Controllers
             {
                 string sql = $@"
                 UPDATE Employee
-                SET FirstName = '{model.Employee.FirstName}',
+                SET
                     LastName = '{model.Employee.LastName}',
-                    DepartmentName = '{model.Employee.DepartmentId}'
-                WHERE Id = {id}";
+                    DepartmentId = '{model.Employee.DepartmentId}'
+                WHERE EmployeeId = {id}";
 
                 using (IDbConnection conn = Connection)
                 {

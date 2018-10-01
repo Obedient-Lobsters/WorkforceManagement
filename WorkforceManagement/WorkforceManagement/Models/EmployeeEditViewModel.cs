@@ -17,8 +17,8 @@ namespace WorkforceManagement.Models.ViewModels
     {
         public Employee Employee { get; set; } = new Employee();
 
-        [Display(Name = "Current Training Programs")]
-        public List<SelectListItem> TrainingPrograms { get; }
+        //[Display(Name = "Current Training Programs")]
+        //public List<SelectListItem> TrainingPrograms { get; }
 
         [Display(Name = "Current Department")]
         public List<SelectListItem> Departments { get; }
