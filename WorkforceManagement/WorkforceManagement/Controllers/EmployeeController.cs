@@ -112,6 +112,7 @@ namespace WorkforceManagement.Controllers
                     e.EmployeeId,
                     e.FirstName,
                     e.LastName,
+                    e.DepartmentId,
                     d.DepartmentId,
                     d.DepartmentName
                 FROM Employee e
@@ -180,6 +181,7 @@ namespace WorkforceManagement.Controllers
                 UPDATE Employee
                 SET FirstName = '{model.Employee.FirstName}',
                     LastName = '{model.Employee.LastName}',
+                    DepartmentName = '{model.Employee.DepartmentId}'
                 WHERE Id = {id}";
 
                 using (IDbConnection conn = Connection)
