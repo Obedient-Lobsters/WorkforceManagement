@@ -67,13 +67,10 @@ namespace WorkforceManagement.Controllers
 
             }
         }
-        public IDbConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            }
-        }
+
+        //GET(SINGLE): Employee Details
+        //Purpose: Excute SQL statement that gets single employee detail and returns value of of columns in of single row.
+        //Author: Aaron Miller 
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -81,7 +78,7 @@ namespace WorkforceManagement.Controllers
             {
                 return NotFound();
             }
-            //detail query NOT FINISHED
+
             string sql = $@"
             SELECT
                 e.EmployeeId,
