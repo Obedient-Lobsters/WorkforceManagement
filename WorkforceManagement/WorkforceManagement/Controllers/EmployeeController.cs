@@ -113,34 +113,37 @@ namespace WorkforceManagement.Controllers
             {
                 string sql = $@"
                     INSERT INTO Employee
-                        ( FirstName, LastName, StartDate, DepartmentId )
+                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor, Email )
                         VALUES
-                        ( null 
-                            , '{employee.FirstName}'
+                        (  
+                              '{employee.FirstName}'
                             , '{employee.LastName}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
+                            , '{employee.Supervisor}'
+                            , '{employee.Email}'
                         )
                     ";
 
                 using (IDbConnection conn = Connection)
                 {
                     int rowsAffected = await conn.ExecuteAsync(sql);
-
                     if (rowsAffected > 0)
                     {
                         return RedirectToAction(nameof(Index));
                     }
                 }
             }
+            return View(employee);
+
 
             // ModelState was invalid, or saving the Employee data failed. Show the form again.
-            using (IDbConnection conn = Connection)
-            {
-                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
-                ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
-                return View(employee);
-            }
+            //using (IDbConnection conn = Connection)
+            //{
+            //    IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
+            //    ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
+            //    return View(employee);
+            //}
         }
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
