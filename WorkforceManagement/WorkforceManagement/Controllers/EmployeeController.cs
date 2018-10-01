@@ -1,46 +1,4 @@
-<<<<<<< HEAD
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Configuration;
-using WorkforceManagement.Models;
-//using WorkforceManagement.Models.ViewModels;
-using System.Data.SqlClient;
-
-namespace WorkforceManagement.Controllers
-{
-    public class EmployeeController : Controller
-    {
-        private readonly IConfiguration _config;
-
-        public EmployeeController(IConfiguration config)
-        {
-            _config = config;
-        }
-
-        public IDbConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            }
-        }
-
-
-
-        // GET: Employee
-        public ActionResult Index()
-        {
-            return View();
-=======
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -96,7 +54,8 @@ namespace WorkforceManagement.Controllers
 
                 var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
                         sql,
-                        (employee, department) => {
+                        (employee, department) =>
+                        {
                             if (!employees.ContainsKey(employee.EmployeeId))
                             {
                                 employees[employee.EmployeeId] = employee;
@@ -108,7 +67,6 @@ namespace WorkforceManagement.Controllers
                 return View(employees.Values);
 
             }
->>>>>>> master
         }
 
         // GET: Employee/Details/5
@@ -122,7 +80,7 @@ namespace WorkforceManagement.Controllers
             using (IDbConnection conn = Connection)
             {
                 // Get all department data
-                List<Department> departments = (await conn.QueryAsync<Department>("SELECT Id, Name FROM Department")).ToList();
+                List<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
 
                 // Add a prompting department for dropdown
                 departments.Insert(0, new Department() { DepartmentId = 0, DepartmentName = "Select department..." });
