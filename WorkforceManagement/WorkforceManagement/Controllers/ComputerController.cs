@@ -1,14 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using WorkforceManagement.Models;
 
 namespace WorkforceManagement.Controllers
 {
     public class ComputerController : Controller
     {
+        private readonly IConfiguration _config;
+
+        public ComputerController(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
         // GET: Computer
         public ActionResult Index()
         {
@@ -21,28 +40,40 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
-        // GET: Computer/Create
-        public ActionResult Create()
+        [HttpGet]
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Computer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer")] Computer computer)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                string sql = $@"
+                    INSERT INTO Computer
+                        ( DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer )
+                        VALUES
+                        ( '{computer.DatePurchased}', null, '{computer.Working}', '{computer.ModelName}', '{computer.Manufacturer}' )
+                    ";
 
-                return RedirectToAction(nameof(Index));
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(computer);
         }
+
+       
 
         // GET: Computer/Edit/5
         public ActionResult Edit(int id)
