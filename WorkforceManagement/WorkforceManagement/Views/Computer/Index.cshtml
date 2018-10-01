@@ -1,0 +1,49 @@
+﻿@*Author: Evan Lusky
+    Razor template for List associated with Computer model.  Removed a few lines to only show pertinent information.*@
+
+@model IEnumerable<WorkforceManagement.Models.Computer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Computers</h2>
+
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Working)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModelName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Manufacturer)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <th>
+                @Html.DisplayFor(modelItem => item.Working)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.ComputerId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ComputerId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

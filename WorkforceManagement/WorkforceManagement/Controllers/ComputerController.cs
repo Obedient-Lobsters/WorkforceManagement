@@ -1,18 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using WorkforceManagement.Models;
 
 namespace WorkforceManagement.Controllers
 {
     public class ComputerController : Controller
     {
-        // GET: Computer
-        public ActionResult Index()
+        private readonly IConfiguration _config;
+
+        public ComputerController(IConfiguration config)
         {
-            return View();
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
+        // Author: Evan Lusky
+        // Simple dapper query for Computer
+        // Returns and IEnumerable of Computer objects to pass to View.
+        public async Task<IActionResult> Index()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Computer> computers = await conn.QueryAsync<Computer>(
+                    "select ModelName, Manufacturer, Working from Computer;"
+                );
+                return View(computers);
+            }
         }
 
         // GET: Computer/Details/5
