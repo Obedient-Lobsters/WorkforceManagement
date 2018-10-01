@@ -68,10 +68,29 @@ namespace WorkforceManagement.Controllers
         }
 
         // GET: Computer/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public async Task<IActionResult> DeleteConfirm(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    string sql = $@"
+        //                 SELECT ec.ComputerId, c.ComputerId
+        //                 FROM EmployeeComputer ec
+        //                 JOIN Computer c On ec.ComputerId = c.ComputerId
+        //                 WHERE c.ComputerId = {id};";
+
+        //    using (IDbConnection conn = Connection)
+        //    {
+        //        int rowsAffected = await conn.ExecuteAsync(sql);
+        //        if (rowsAffected = 0)
+        //        {
+        //            return;
+        //        }
+
+
+        //    }
+        //}
 
         // POST: Computer/Delete/5
         [HttpPost]
