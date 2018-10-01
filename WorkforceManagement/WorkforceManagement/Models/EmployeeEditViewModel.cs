@@ -23,6 +23,9 @@ namespace WorkforceManagement.Models.ViewModels
         [Display(Name = "Current Department")]
         public List<SelectListItem> Departments { get; }
 
+        [Display(Name = "Current Computer")]
+        public List<SelectListItem> Computers { get; }
+
         private readonly IConfiguration _config;
 
         public IDbConnection Connection
@@ -40,6 +43,8 @@ namespace WorkforceManagement.Models.ViewModels
             _config = config;
 
             string sql = $@"SELECT DepartmentId, DepartmentName FROM Department";
+
+            string compSql = $@"SELECT ComputerId, ComputerName FROM Computer";
 
 
             string TrainingProgramSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
@@ -62,6 +67,24 @@ namespace WorkforceManagement.Models.ViewModels
                 this.Departments.Insert(0, new SelectListItem
                 {
                     Text = "Choose Department...",
+                    Value = "0"
+                });
+
+                List<Computer> computers = (conn.Query<Computer>(sql)).ToList();
+
+
+
+                this.Computers = computers
+                    .Select(li => new SelectListItem
+                    {
+                        Text = li.ModelName,
+                        Value = li.ComputerId.ToString()
+                    }).ToList();
+
+                // Add a prompt so that the <select> element isn't blank
+                this.Departments.Insert(0, new SelectListItem
+                {
+                    Text = "Choose Computer...",
                     Value = "0"
                 });
 

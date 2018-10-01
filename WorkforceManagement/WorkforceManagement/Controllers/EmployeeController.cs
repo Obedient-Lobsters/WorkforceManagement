@@ -123,6 +123,24 @@ namespace WorkforceManagement.Controllers
                 JOIN Department d on e.DepartmentId = d.DepartmentId
                 WHERE e.EmployeeId = {id}";
 
+            string compSql = $@"
+                SELECT
+                    e.EmployeeId,
+                    e.FirstName,
+                    e.LastName,
+                    e.Email,
+                    e.Supervisor,
+                    e.StartDate,
+                    e.EndDate,
+                    c.ComputerId,
+                    c.ModelName,
+                    c.Manufacturer
+                FROM Employee e
+				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
+                JOIN Computer c on ec.ComputerId = c.ComputerId
+                WHERE e.EmployeeId = {id}
+                ";
+
             string exerciseSql = $@"
                     SELECT
                     s.Id,
@@ -151,6 +169,14 @@ namespace WorkforceManagement.Controllers
                         employee.Department = department;
                         return employee;
                     }, splitOn: "EmployeeId, DepartmentId"
+                )).Single();
+
+                model.Employee = (await conn.QueryAsync<Employee, Computer, Employee>(
+                compSql,
+                (employee, computer) => {
+                     employee.Computer = computer;
+                     return employee;
+                }, splitOn: "EmployeeId, ComputerId"
                 )).Single();
 
                 //model.Employee.Tra = (await conn.QueryAsync<Student, Exercise, Exercise>(

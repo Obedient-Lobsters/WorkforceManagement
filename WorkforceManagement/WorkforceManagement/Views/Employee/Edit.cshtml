@@ -17,7 +17,7 @@
             <input type="hidden" asp-for="Employee.EmployeeId" />
             <div class="form-group">
                 <label asp-for="Employee.FirstName" class="control-label"></label>
-                <input asp-for="Employee.FirstName" class="form-control" readonly/>
+                <input asp-for="Employee.FirstName" class="form-control" readonly />
                 <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -27,8 +27,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Employee.Email" class="control-label"></label>
-                <input asp-for="Employee.Email" class="form-control" readonly/>
+                <input asp-for="Employee.Email" class="form-control" readonly />
                 <span asp-validation-for="Employee.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Computers" class="control-label"></label>
+                <select asp-for="Employee.ComputerId" asp-items="@Model.Computers"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Departments" class="control-label"></label>
