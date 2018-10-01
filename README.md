@@ -38,14 +38,21 @@ The great folks in the Human Resources Department can view all Departments when 
 ### Add A New Department
 Human Resources can add a new department by clicking Create New link on the View all Departments view. The link will show a form with an input field requesting the new department name and a submit button. Once submitted they will be rerouted back to view all department page and the new department is also listed.
 
-##### Details
+
+### Details/View one Department
 Click on the word details on and individual department to see a list of that department's employees.
 
 ## Employee 
 
-## Employee Index/List View
-To see the Employee Index view, click on the Employee tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for First Name Last Name and Department Name. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Employee, you should see a hyperlink for ```Detail``` and ```Edit```. Above the First Name column, there should be a hyperlink for ```Create New```.
-
+### Employee Index/List View
+To see the Employee Index view, click on the Employee tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for First Name Last Name and Department Name. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Employee, you should see a hyperlink for ```Detail``` and ```Edit```. Above the First Name column, there should be a hyperlink for ```Create New```. 
 ### Details
 When the employee list is being viewed, the user will be able to click on the ```Details``` link that will bring them to a "details" view of the specific employee that was associated with the ```Details``` link. The user should see the an employee's first name, last name, department name, and a list of training programs they are enrolled in with the details of the program listed as well. The user should see an ```Edit``` button at the bottom as well as a ```back to list``` button. 
 
+
+## Computer
+
+
+### Details/View One Computer
+Click on the link "Details" one an indiviual computer in the Index view. The browser will show the details of the selected computer. The details will include the computer id, Date of purchase of the computer, date the computer was decommissioned if applicable, operation status as a checkbox, model and manufacturer.
+  
