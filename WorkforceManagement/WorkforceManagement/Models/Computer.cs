@@ -15,7 +15,11 @@ namespace WorkforceManagement.Models
         [DataType(DataType.Date), Display(Name="Date of Purchase")]
         public DateTime DatePurchased { get; set; }
 
-        [Display(Name = "Date Decommissioned"),DisplayFormat(NullDisplayText = "In Service", ApplyFormatInEditMode = true)]
+        [Display(Name = "Date Decommissioned"),
+         DisplayFormat(NullDisplayText = "In Service",
+                       ApplyFormatInEditMode = true,
+                       DataFormatString = "{0:MM/dd/yyyy}")]
+        [DataType(DataType.Date)]
         public DateTime? DateDecommissioned { get; set; }
 
         [Required]
