@@ -17,6 +17,7 @@ namespace WorkforceManagement.Controllers
         private readonly IConfiguration _config;
 
         public ComputerController(IConfiguration config)
+
         {
             _config = config;
         }
@@ -43,9 +44,37 @@ namespace WorkforceManagement.Controllers
         }
 
         // GET: Computer/Details/5
-        public ActionResult Details(int id)
+        //Author: Shu Sajid
+        //Purpose:This provides the Details view with a Computer object with the DepartmentId {id}
+        //Since this dapper code returns an ienumerable and the Details view needs a single Department object we use Single() on the query.
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+            SELECT
+                c.ComputerId,
+                c.DatePurchased,
+                c.DateDecommissioned,
+                c.Working,
+                c.ModelName,
+                c.Manufacturer
+            FROM Computer c
+            WHERE ComputerId = {id};";
+
+            using (IDbConnection conn = Connection)
+            {
+                Computer computerQuery = await conn.QuerySingleAsync<Computer>(sql);
+
+                if (computerQuery == null)
+                {
+                    return NotFound();
+                }
+                return View(computerQuery);
+            }
         }
 
         // GET: Computer/Create
