@@ -425,3 +425,16 @@ INSERT INTO ProductOrder (OrderId, ProductId)
 VALUES(
 3,
 3);
+INSERT INTO Computer(DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer)
+VALUES 
+(
+ '2018/10/01', 
+ null,
+0,
+'MacBook Pro',
+'Apple');
+INSERT INTO EmployeeComputer(DateAssigned,EmployeeId,ComputerId)
+VALUES(  
+'2010/04/20',  
+3,
+4);
