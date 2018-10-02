@@ -52,6 +52,8 @@ When the employee list is being viewed, the user will be able to click on the ``
 
 ## Computer
 
+## Computer Index/List View
+    To see the Computer Index view, click on the Computer tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for Make, Model and Working. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Computer, you should see a hyperlink for ```Detail``` and ```Delete```.  
 
 ### Details/View One Computer
 Click on the link "Details" one an indiviual computer in the Index view. The browser will show the details of the selected computer. The details will include the computer id, Date of purchase of the computer, date the computer was decommissioned if applicable, operation status as a checkbox, model and manufacturer.
