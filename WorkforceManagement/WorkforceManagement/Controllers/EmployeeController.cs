@@ -157,7 +157,7 @@ namespace WorkforceManagement.Controllers
                     {
                         employee.Department = department;
                         employee.Computer = computer;
-                        employee.SelectedPrograms = trainingProgram;
+                        employee.TrainingProgram = trainingProgram;
                         return employee;
                     }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
                 )).Single();

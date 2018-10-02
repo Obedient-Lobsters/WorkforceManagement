@@ -34,7 +34,7 @@ namespace WorkforceManagement.Models
 
         public Computer Computer { get; set; }
 
-        public TrainingProgram SelectedPrograms { get; set; }
+        public TrainingProgram TrainingProgram { get; set; }
 
         [Display(Name = "Employee Name")]
         public string FullName
