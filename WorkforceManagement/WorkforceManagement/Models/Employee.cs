@@ -27,6 +27,10 @@ namespace WorkforceManagement.Models
         public DateTime StartDate { get; set; }
 
         [Required]
+        [DataType(DataType.Date), Display(Name = "End Date")]
+        public DateTime EndDate { get; set; }
+
+        [Required]
         public bool Supervisor { get; set; }
 
         [Required]
