@@ -121,15 +121,11 @@ namespace WorkforceManagement.Controllers
                     c.ModelName,
                     c.Manufacturer,
                     ec.EmployeeId,
-                    ec.ComputerId,
-					tp.TrainingProgramId,
-					tp.ProgramName
+                    ec.ComputerId
                 FROM Employee e
                 JOIN Department d on e.DepartmentId = d.DepartmentId
-				LEFT JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
-                LEFT JOIN Computer c on ec.ComputerId = c.ComputerId
-				JOIN EmployeeTraining et ON e.EmployeeId = et.EmployeeId
-				JOIN TrainingProgram tp ON tp.TrainingProgramId = et.TrainingProgramId
+				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
+                JOIN Computer c on ec.ComputerId = c.ComputerId
                 WHERE e.EmployeeId = {id}";
 
             string trainingProgSql = $@"
@@ -147,33 +143,28 @@ namespace WorkforceManagement.Controllers
 				JOIN TrainingProgram tp ON tp.TrainingProgramId = et.TrainingProgramId
                 WHERE e.EmployeeId = {id}";
 
+
             using (IDbConnection conn = Connection)
             {
                 EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
 
-                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
+                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
                     sql,
-                    (employee, department, computer, trainingProgram) =>
+                    (employee, department, computer) =>
                     {
                         employee.Department = department;
                         employee.Computer = computer;
-                        employee.TrainingProgram = trainingProgram;
                         return employee;
-                    }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
+                    }, splitOn: "EmployeeId, DepartmentId, ComputerId"
                 )).Single();
 
 
+                
+                var someStiff = (await conn.QueryAsync<TrainingProgram>(
+                                trainingProgSql));
 
-    //model.Employee.SelectedPrograms = (await conn.QueryAsync<Employee, TrainingProgram, int>(
-    //                trainingProgSql,
-    //                (employee, trainingProgram) =>
-    //                {
-    //                    Array.add(model.SelectedPrograms, trainingProgram.TrainingProgramId);
-    //                    model.SelectedPrograms.add(trainingProgram.TrainingProgramId);
-    //                    return trainingProgram.TrainingProgramId;
-    //                    ;
-    //                }
-    //            )).ToList();
+
+                model.Enrolled = someStiff.Select(progIds => progIds.TrainingProgramId).ToArray();
 
                 //model.SelectedExerciseIds = model.Student.AssignedExercises.Select(exercise => { exercise.Id } ;);
 
@@ -192,6 +183,13 @@ namespace WorkforceManagement.Controllers
                 return NotFound();
             }
 
+
+
+            DateTime currentDate = DateTime.Now;
+            var day = currentDate.Date;
+
+            var daySS = currentDate.ToShortDateString();
+
             if (ModelState.IsValid)
             {
                 string sql = $@"
@@ -199,9 +197,14 @@ namespace WorkforceManagement.Controllers
                 SET
                     LastName = '{model.Employee.LastName}',
                     DepartmentId = '{model.Employee.DepartmentId}',
-                    ComputerId = '{model.Employee.ComputerId}',
 
-                WHERE EmployeeId = {id}";
+                WHERE EmployeeId = {id};
+               ";
+
+                //if (model.Employee.ComputerId == Employee.Computer.ComputerId)
+
+                //ComputerId = '{model.Employee.ComputerId}',
+                //    TrainingProgramId = '{model.Employee.TrainingProgram.TrainingProgramId}'
 
                 using (IDbConnection conn = Connection)
                 {

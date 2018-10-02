@@ -39,8 +39,8 @@
                 <select asp-for="Employee.DepartmentId" asp-items="@Model.Departments"></select>
             </div>
             <div class="form-group">
-            <label asp-for="SelectedPrograms" class="control-label"></label>
-            <select asp-for="Employee.TrainingProgram.TrainingProgramId" asp-items="@Model.SelectedPrograms"></select>
+            <label asp-for="TrainingPrograms" class="control-label"></label>
+            <select asp-for="@Model.Enrolled" asp-items="@Model.TrainingPrograms"></select>
         </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />

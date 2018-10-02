@@ -25,7 +25,9 @@ namespace WorkforceManagement.Models.ViewModels
         public List<SelectListItem> Computers { get; }
 
         [Display(Name = "Training Programs")]
-        public List<SelectListItem> SelectedPrograms { get; }
+        public List<SelectListItem> TrainingPrograms { get; set; } = new List<SelectListItem>();
+
+        public int[] Enrolled { get; set; }
 
         private readonly IConfiguration _config;
 
@@ -91,7 +93,7 @@ namespace WorkforceManagement.Models.ViewModels
 
                 List<TrainingProgram> trainingProgs = conn.Query<TrainingProgram>(TrainingProgSql).ToList();
 
-                this.SelectedPrograms = trainingProgs
+                this.TrainingPrograms = trainingProgs
                 .Select(li => new SelectListItem
                 {
                     Text = $"{li.ProgramName}",
@@ -99,7 +101,7 @@ namespace WorkforceManagement.Models.ViewModels
                 }).ToList();
 
                 // Add a prompt so that the <select> element isn't blank
-                this.SelectedPrograms.Insert(0, new SelectListItem
+                this.TrainingPrograms.Insert(0, new SelectListItem
                 {
                     Text = "Choose Training Program...",
                     Value = "0"
