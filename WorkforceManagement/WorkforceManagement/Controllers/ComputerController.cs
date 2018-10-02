@@ -136,14 +136,14 @@ namespace WorkforceManagement.Controllers
                           FROM EmployeeComputer ec
                           JOIN Computer c ON ec.ComputerId = c.ComputerId
                           WHERE c.ComputerId = {id}";
+
             using (IDbConnection conn = Connection)
             {
-                int rowsAffected = await conn.ExecuteAsync(sql);
-                if (rowsAffected > 0)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                throw new Exception("Computer is or has been previously assigned");
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+
+                if (computer == null) return NotFound();
+
+                return View(computer);
             }
         }
 
@@ -166,7 +166,7 @@ namespace WorkforceManagement.Controllers
                 if (rowsAffected == 0)
                 {
                     sql = $@"DELETE ComputerId FROM Computer WHERE ComputerId = {id};";
-                    var computer = await conn.QueryAsync(sql);
+                    Computer computer = await conn.QueryFirstAsync<Computer>(sql);
                     return View(computer);
                 }
                 throw new Exception("Computer is or has been previously assigned");
