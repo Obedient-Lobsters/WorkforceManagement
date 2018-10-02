@@ -75,6 +75,8 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
+        //Author: Leah Gwin
+        //Purpose: Load Dropdown for Dept. Create
         private async Task<SelectList> DepartmentList(int? selected)
         {
             using (IDbConnection conn = Connection)
@@ -90,7 +92,7 @@ namespace WorkforceManagement.Controllers
                 return selectList;
             }
         }
-
+        //Author: Leah Gwin
         // GET: Employee/Create
         public async Task<IActionResult> Create()
         {
@@ -113,15 +115,17 @@ namespace WorkforceManagement.Controllers
             {
                 string sql = $@"
                     INSERT INTO Employee
-                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor, Email )
+                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor, Email, Computer, FullName )
                         VALUES
                         (  
                               '{employee.FirstName}'
                             , '{employee.LastName}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
-                            , '{employee.Supervisor}'
-                            , '{employee.Email}'
+                            , 0
+                            , null
+                            , null
+                            , null
                         )
                     ";
 
@@ -134,16 +138,14 @@ namespace WorkforceManagement.Controllers
                     }
                 }
             }
-            return View(employee);
 
-
-            // ModelState was invalid, or saving the Employee data failed. Show the form again.
-            //using (IDbConnection conn = Connection)
-            //{
-            //    IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
-            //    ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
-            //    return View(employee);
-            //}
+            //ModelState was invalid, or saving the Employee data failed. Show the form again.
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
+                ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
+                return View(employee);
+            }
         }
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
