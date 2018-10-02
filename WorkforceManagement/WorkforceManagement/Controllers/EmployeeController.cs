@@ -81,7 +81,7 @@ namespace WorkforceManagement.Controllers
             }
 
             string sql = $@"
-            SELECT
+   SELECT
                 e.EmployeeId,
                 e.FirstName,
                 e.LastName,
@@ -91,6 +91,7 @@ namespace WorkforceManagement.Controllers
 				ec.EmployeeComputerId,
 				ec.EmployeeId,
 				ec.ComputerId,
+				ec.DateReturned,
 				c.ComputerId,
 				c.Manufacturer,
 				c.ModelName,
@@ -111,7 +112,7 @@ namespace WorkforceManagement.Controllers
 			ON e.EmployeeId= et.EmployeeId
 			JOIN TrainingProgram tp 
 			ON et.TrainingProgramId= tp.TrainingProgramId
-            WHERE e.EmployeeId= { id }";
+            WHERE e.EmployeeId= { id } and (ec.DateReturned is null or ec.DateReturned='')";
 
 
             using (IDbConnection conn = Connection)
