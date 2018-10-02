@@ -115,6 +115,8 @@ namespace WorkforceManagement.Controllers
             WHERE e.EmployeeId= { id } and (ec.DateReturned is null or ec.DateReturned='')";
 
 
+
+
             using (IDbConnection conn = Connection)
             {
                 Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
