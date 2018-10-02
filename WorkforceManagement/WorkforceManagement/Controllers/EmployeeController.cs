@@ -31,7 +31,7 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee
-        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they bolong to, and then send that information to the view that corresponds to the Employee model
+        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they belong to, and then send that information to the view that corresponds to the Employee model
         // Author: William K. Kimball
         public async Task<IActionResult> Index()
         {
@@ -115,20 +115,14 @@ namespace WorkforceManagement.Controllers
             {
                 string sql = $@"
                     INSERT INTO Employee
-                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor, EndDate, Email, Department, Computer, FullName )
+                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor)
                         VALUES
                         (  
                               '{employee.FirstName}'
                             , '{employee.LastName}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
-                            , 0
-                            , null
-                            , test@test.com
-                            , testDepartment
-                            , testComputer
-                            , '{employee.FullName}'
-                        )
+                            , 0                        )
                     ";
 
                 using (IDbConnection conn = Connection)
