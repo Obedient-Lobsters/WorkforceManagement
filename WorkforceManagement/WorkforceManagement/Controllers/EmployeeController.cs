@@ -199,7 +199,8 @@ namespace WorkforceManagement.Controllers
                 SET
                     LastName = '{model.Employee.LastName}',
                     DepartmentId = '{model.Employee.DepartmentId}',
-                    ComputerId = '{model.Employee.ComputerId}'
+                    ComputerId = '{model.Employee.ComputerId}',
+
                 WHERE EmployeeId = {id}";
 
                 using (IDbConnection conn = Connection)
