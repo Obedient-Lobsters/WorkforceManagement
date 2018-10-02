@@ -1,14 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using WorkforceManagement.Models;
 
 namespace WorkforceManagement.Controllers
 {
     public class ComputerController : Controller
     {
+        private readonly IConfiguration _config;
+
+        public ComputerController(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
         // GET: Computer
         public ActionResult Index()
         {
@@ -68,25 +87,53 @@ namespace WorkforceManagement.Controllers
         }
 
         // GET: Computer/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> DeleteConfirm(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+                          SELECT ec.ComputerId,
+                                 c.ComputerId
+                          FROM EmployeeComputer ec
+                          JOIN Computer c ON ec.ComputerId = c.ComputerId
+                          WHERE c.ComputerId = {id}";
+            using (IDbConnection conn = Connection)
+            {
+                int rowsAffected = await conn.ExecuteAsync(sql);
+                if (rowsAffected > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                throw new Exception("Computer is or has been previously assigned");
+            }
         }
 
-        // POST: Computer/Delete/5
+
+            // POST: Computer/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            string sql = $@"
+                          SELECT ec.ComputerId,
+                                 c.ComputerId
+                          FROM EmployeeComputer ec
+                          JOIN Computer c ON ec.ComputerId = c.ComputerId
+                          WHERE c.ComputerId = {id}";
+            using (IDbConnection conn = Connection)
             {
-                return View();
+                int rowsAffected = await conn.ExecuteAsync(sql);
+                if (rowsAffected == 0)
+                {
+                    sql = $@"DELETE ComputerId FROM Computer WHERE ComputerId = {id};";
+                    var computer = await conn.QueryAsync(sql);
+                    return View(computer);
+                }
+                throw new Exception("Computer is or has been previously assigned");
             }
         }
     }
