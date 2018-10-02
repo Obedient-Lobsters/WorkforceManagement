@@ -135,6 +135,8 @@ namespace WorkforceManagement.Controllers
                        return employeeEntry;
                    }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
                    );
+       
+
                 return View(employeesQuery.Distinct().First());
             }
         }
