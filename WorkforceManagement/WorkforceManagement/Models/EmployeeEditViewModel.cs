@@ -21,13 +21,11 @@ namespace WorkforceManagement.Models.ViewModels
         [Display(Name = "Department")]
         public List<SelectListItem> Departments { get; }
 
-        [Display(Name = " Assigned Computer")]
+        [Display(Name = "Assigned Computer")]
         public List<SelectListItem> Computers { get; }
 
         [Display(Name = "Training Programs")]
-        public List<SelectListItem> TrainingPrograms { get; }
-
-        public int[] SelectedPrograms { get; set; }
+        public List<SelectListItem> SelectedPrograms { get; }
 
         private readonly IConfiguration _config;
 
@@ -47,10 +45,10 @@ namespace WorkforceManagement.Models.ViewModels
 
             string sql = $@"SELECT DepartmentId, DepartmentName FROM Department";
 
-            string compSql = $@"SELECT ComputerId, ModelName FROM Computer";
+            string compSql = $@"SELECT ComputerId, ModelName, Manufacturer FROM Computer";
 
 
-            string TrainingProgSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
+            string TrainingProgSql = $@"SELECT TrainingProgramId, ProgramName FROM TrainingProgram";
 
 
             using (IDbConnection conn = Connection)
@@ -91,9 +89,9 @@ namespace WorkforceManagement.Models.ViewModels
                     Value = "0"
                 });
 
-                IEnumerable<TrainingProgram> trainingProgs = (conn.Query<TrainingProgram>(TrainingProgSql)).ToList();
+                List<TrainingProgram> trainingProgs = conn.Query<TrainingProgram>(TrainingProgSql).ToList();
 
-                this.TrainingPrograms = trainingProgs
+                this.SelectedPrograms = trainingProgs
                 .Select(li => new SelectListItem
                 {
                     Text = $"{li.ProgramName}",
@@ -101,7 +99,7 @@ namespace WorkforceManagement.Models.ViewModels
                 }).ToList();
 
                 // Add a prompt so that the <select> element isn't blank
-                this.TrainingPrograms.Insert(0, new SelectListItem
+                this.SelectedPrograms.Insert(0, new SelectListItem
                 {
                     Text = "Choose Training Program...",
                     Value = "0"

@@ -121,11 +121,15 @@ namespace WorkforceManagement.Controllers
                     c.ModelName,
                     c.Manufacturer,
                     ec.EmployeeId,
-                    ec.ComputerId
+                    ec.ComputerId,
+					tp.TrainingProgramId,
+					tp.ProgramName
                 FROM Employee e
                 JOIN Department d on e.DepartmentId = d.DepartmentId
 				LEFT JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
                 LEFT JOIN Computer c on ec.ComputerId = c.ComputerId
+				JOIN EmployeeTraining et ON e.EmployeeId = et.EmployeeId
+				JOIN TrainingProgram tp ON tp.TrainingProgramId = et.TrainingProgramId
                 WHERE e.EmployeeId = {id}";
 
             string trainingProgSql = $@"
@@ -147,14 +151,15 @@ namespace WorkforceManagement.Controllers
             {
                 EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
 
-                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
+                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
                     sql,
-                    (employee, department, computer) =>
+                    (employee, department, computer, trainingProgram) =>
                     {
                         employee.Department = department;
                         employee.Computer = computer;
+                        employee.SelectedPrograms = trainingProgram;
                         return employee;
-                    }, splitOn: "EmployeeId, DepartmentId, ComputerId"
+                    }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
                 )).Single();
 
 
