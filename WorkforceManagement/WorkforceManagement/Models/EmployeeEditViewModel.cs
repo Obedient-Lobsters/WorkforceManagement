@@ -17,14 +17,17 @@ namespace WorkforceManagement.Models.ViewModels
     {
         public Employee Employee { get; set; } = new Employee();
 
-        //[Display(Name = "Current Training Programs")]
-        //public List<SelectListItem> TrainingPrograms { get; }
 
-        [Display(Name = "Current Department")]
+        [Display(Name = "Department")]
         public List<SelectListItem> Departments { get; }
 
-        [Display(Name = "Current Computer")]
+        [Display(Name = " Assigned Computer")]
         public List<SelectListItem> Computers { get; }
+
+        [Display(Name = "Training Programs")]
+        public List<SelectListItem> TrainingPrograms { get; }
+
+        public int[] SelectedPrograms { get; set; }
 
         private readonly IConfiguration _config;
 
@@ -47,7 +50,7 @@ namespace WorkforceManagement.Models.ViewModels
             string compSql = $@"SELECT ComputerId, ModelName FROM Computer";
 
 
-            string TrainingProgramSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
+            string TrainingProgSql = $@" SELECT tp.TrainingProgramId, tp.ProgramName FROM TrainingProgram tp;";
 
 
             using (IDbConnection conn = Connection)
@@ -77,7 +80,7 @@ namespace WorkforceManagement.Models.ViewModels
                 this.Computers = computers
                     .Select(li => new SelectListItem
                     {
-                        Text = li.ModelName,
+                        Text = $"{li.Manufacturer} {li.ModelName}",
                         Value = li.ComputerId.ToString()
                     }).ToList();
 
@@ -88,21 +91,21 @@ namespace WorkforceManagement.Models.ViewModels
                     Value = "0"
                 });
 
-                //IEnumerable<Exercise> exercises = (conn.Query<Exercise>(ExerciseSql)).ToList();
+                IEnumerable<TrainingProgram> trainingProgs = (conn.Query<TrainingProgram>(TrainingProgSql)).ToList();
 
-                //this.Exercises = exercises
-                //.Select(li => new SelectListItem
-                //{
-                //    Text = $"{li.Name}, {li.Language}",
-                //    Value = li.Id.ToString()
-                //}).ToList();
+                this.TrainingPrograms = trainingProgs
+                .Select(li => new SelectListItem
+                {
+                    Text = $"{li.ProgramName}",
+                    Value = li.TrainingProgramId.ToString()
+                }).ToList();
 
-                //// Add a prompt so that the <select> element isn't blank
-                //this.Exercises.Insert(0, new SelectListItem
-                //{
-                //    Text = "Choose exercise...",
-                //    Value = "0"
-                //});
+                // Add a prompt so that the <select> element isn't blank
+                this.TrainingPrograms.Insert(0, new SelectListItem
+                {
+                    Text = "Choose Training Program...",
+                    Value = "0"
+                });
                 ////List<Exercise> Assignedexercises = (conn.Query<Exercise>(StudExerciseSql)).ToList();
                 ////this.Student.AssignedExercises = Assignedexercises.Select(li => new Exercise
                 ////{

@@ -128,23 +128,20 @@ namespace WorkforceManagement.Controllers
                 LEFT JOIN Computer c on ec.ComputerId = c.ComputerId
                 WHERE e.EmployeeId = {id}";
 
-    //        string exerciseSql = $@"
-    //                SELECT
-    //                s.Id,
-    //                s.FirstName,
-    //                s.LastName,
-    //                s.SlackHandle,
-    //                s.CohortId,
-    //                c.ComputerId,
-    //                c.ModelName,
-				//	e.Id,
-				//	e.Name,
-				//	e.Language
-    //            FROM Student s
-    //            JOIN Cohort c on s.CohortId = c.Id
-				//JOIN StudentExercise se ON s.Id = se.StudentId
-				//JOIN Exercise e ON se.ExerciseId = e.Id
-    //            WHERE s.Id = {id}";
+            string trainingProgSql = $@"
+                    SELECT
+                    e.EmployeeId,
+                    e.FirstName,
+                    e.LastName,
+                    e.Email,
+                    e.Supervisor,
+                    e.DepartmentId,
+					tp.TrainingProgramId,
+					tp.ProgramName
+                FROM Employee e
+				JOIN EmployeeTraining et ON e.EmployeeId = et.EmployeeId
+				JOIN TrainingProgram tp ON tp.TrainingProgramId = et.TrainingProgramId
+                WHERE e.EmployeeId = {id}";
 
             using (IDbConnection conn = Connection)
             {
@@ -161,14 +158,17 @@ namespace WorkforceManagement.Controllers
                 )).Single();
 
 
-                //model.Employee.Tra = (await conn.QueryAsync<Student, Exercise, Exercise>(
-                //    exerciseSql,
-                //    (student, exercise) =>
-                //    {
-                //        student.AssignedExercises.Add(exercise);
-                //        return exercise;
-                //    }
-                //)).ToList();
+
+    //model.Employee.SelectedPrograms = (await conn.QueryAsync<Employee, TrainingProgram, int>(
+    //                trainingProgSql,
+    //                (employee, trainingProgram) =>
+    //                {
+    //                    Array.add(model.SelectedPrograms, trainingProgram.TrainingProgramId);
+    //                    model.SelectedPrograms.add(trainingProgram.TrainingProgramId);
+    //                    return trainingProgram.TrainingProgramId;
+    //                    ;
+    //                }
+    //            )).ToList();
 
                 //model.SelectedExerciseIds = model.Student.AssignedExercises.Select(exercise => { exercise.Id } ;);
 
