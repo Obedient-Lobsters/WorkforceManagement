@@ -1,6 +1,4 @@
-
 using System;
-
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -69,12 +67,6 @@ namespace WorkforceManagement.Controllers
                 return View(employees.Values);
 
             }
-        }
-
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
         }
 
         //Author: Leah Gwin
@@ -149,7 +141,7 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit (int id)
         {
 
             string sql = @"
