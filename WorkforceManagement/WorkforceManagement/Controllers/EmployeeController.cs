@@ -93,6 +93,7 @@ namespace WorkforceManagement.Controllers
             }
         }
         //Author: Leah Gwin
+        //Purpose: Enables the Dept list to be in the dropdown for post.
         // GET: Employee/Create
         public async Task<IActionResult> Create()
         {

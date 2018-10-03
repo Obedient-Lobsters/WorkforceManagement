@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Authors: Leah Gwin and William Kimball
+//Purpose: Model for Employee
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
