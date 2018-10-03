@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Authors: Leah Gwin and William Kimball
+//Purpose: Model for Employee
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,6 +24,13 @@ namespace WorkforceManagement.Models
 
         [Required]
         public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Date), Display(Name = "Start Date")]
+        public DateTime StartDate { get; set; }
+
+        [DataType(DataType.Date), Display(Name = "End Date")]
+        public DateTime EndDate { get; set; }
 
         [Required]
         public bool Supervisor { get; set; }
