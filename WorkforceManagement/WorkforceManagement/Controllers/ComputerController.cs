@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -132,24 +133,29 @@ namespace WorkforceManagement.Controllers
 
             string sql = $@"
                           SELECT ec.ComputerId,
-                                 c.ComputerId
-                          FROM EmployeeComputer ec
-                          JOIN Computer c ON ec.ComputerId = c.ComputerId
+                                 c.ComputerId,
+                                 c.DatePurchased,
+                                 c.DateDecommissioned,
+                                 c.Working,
+                                 c.ModelName,
+                                 c.Manufacturer
+                          FROM Computer c
+                          LEFT JOIN EmployeeComputer ec ON ec.ComputerId = c.ComputerId
                           WHERE c.ComputerId = {id}";
 
             using (IDbConnection conn = Connection)
             {
                 Computer computer = await conn.QueryFirstAsync<Computer>(sql);
 
-                if (computer == null) return NotFound();
+                if (computer == null) return NotFound("Inside DeleteConfirm");
 
                 return View(computer);
             }
         }
 
 
-            // POST: Computer/Delete/5
-        [HttpPost]
+        // POST: Computer/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -162,14 +168,19 @@ namespace WorkforceManagement.Controllers
                           WHERE c.ComputerId = {id}";
             using (IDbConnection conn = Connection)
             {
-                int rowsAffected = await conn.ExecuteAsync(sql);
-                if (rowsAffected == 0)
+                IEnumerable<object> rowsReturned = await conn.QueryAsync(sql);
+                int count = rowsReturned.Count();
+                if (count == 0)
                 {
-                    sql = $@"DELETE ComputerId FROM Computer WHERE ComputerId = {id};";
-                    Computer computer = await conn.QueryFirstAsync<Computer>(sql);
-                    return View(computer);
+                    sql = $@"DELETE FROM Computer WHERE ComputerId = {id};";
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    return RedirectToAction(nameof(Index));
                 }
-                throw new Exception("Computer is or has been previously assigned");
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                throw new Exception("Computer is currently or has been previously been assigned");
             }
         }
     }
