@@ -1,4 +1,7 @@
-﻿using System;
+//Authors: Leah Gwin and William Kimball
+//Purpose: Model for Employee
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,15 +15,22 @@ namespace WorkforceManagement.Models
         public int EmployeeId { get; set; }
 
         [Required]
-        [Display(Name = "First name")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
-        [Display(Name = "Last name")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
         [Required]
         public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Date), Display(Name = "Start Date")]
+        public DateTime StartDate { get; set; }
+
+        [DataType(DataType.Date), Display(Name = "End Date")]
+        public DateTime EndDate { get; set; }
 
         [Required]
         public bool Supervisor { get; set; }
@@ -28,11 +38,9 @@ namespace WorkforceManagement.Models
         [Required]
         public int DepartmentId { get; set; }
 
-        [Display(Name = "Department")]
         public Department Department { get; set; }
 
-        [Display(Name = "Assigned Computer")]
-        public Computer Computer { get; set; } = new Computer();
+        public Computer Computer { get; set; }
 
         [Display(Name = "Employee Name")]
         public string FullName
@@ -42,7 +50,5 @@ namespace WorkforceManagement.Models
                 return $"{FirstName} {LastName}";
             }
         }
-        [Display(Name = "Assigned Training Programs")]
-        public List<TrainingProgram> TrainingPrograms { get; set; } = new List<TrainingProgram>();
     }
 }
