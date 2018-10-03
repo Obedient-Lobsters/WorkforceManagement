@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿using System;
-=======
 using System;
->>>>>>> f06cc08632d71e26454c946e39e54cf53141df7f
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -21,25 +17,6 @@ namespace WorkforceManagement.Controllers
     public class EmployeeController : Controller
     {
         private readonly IConfiguration _config;
-<<<<<<< HEAD
-
-        public EmployeeController(IConfiguration config)
-        {
-            _config = config;
-        }
-
-        public IDbConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            }
-        }
-        // GET: Employee
-        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they bolong to, and then send that information to the view that corresponds to the Employee model
-        // Author: William K. Kimball
-        public async Task<IActionResult> Index()
-=======
 
         public EmployeeController(IConfiguration config)
         {
@@ -171,7 +148,6 @@ namespace WorkforceManagement.Controllers
         }
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
->>>>>>> f06cc08632d71e26454c946e39e54cf53141df7f
         {
 
             string sql = @"

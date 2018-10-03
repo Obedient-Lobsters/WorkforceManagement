@@ -70,7 +70,7 @@
                               </tr>
                           </thead>
                           <tbody>
-                              @foreach (var item in Model.TrainingPrograms.GroupBy(x => x.ProgramName).Select(x => x.First()).ToList())
+                              @foreach (var item in Model.TrainingPrograms.GroupBy(x => x != null? x.ProgramName:"").Select(x => x.First()).ToList())
                               {
                                   <tr>
                                       <td>
