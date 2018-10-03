@@ -69,12 +69,6 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         //Author: Leah Gwin
         //Purpose: Load Dropdown for Dept. Create
         private async Task<SelectList> DepartmentList(int? selected)
@@ -147,48 +141,100 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit (int id)
         {
-            return View();
+
+            string sql = @"
+            SELECT
+                e.EmployeeId,
+                e.FirstName,
+                e.LastName,
+				e.Email,
+                d.DepartmentId,
+                d.DepartmentName
+            FROM Employee e
+            JOIN Department d ON e.DepartmentId = d.DepartmentId
+        ";
+
+            using (IDbConnection conn = Connection)
+            {
+                Dictionary<int, Employee> employees = new Dictionary<int, Employee>();
+
+                var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
+                        sql,
+                        (employee, department) =>
+                        {
+                            if (!employees.ContainsKey(employee.EmployeeId))
+                            {
+                                employees[employee.EmployeeId] = employee;
+                            }
+                            employees[employee.EmployeeId].Department = department;
+                            return employee;
+                        }, splitOn: "EmployeeId, DepartmentId"
+                    );
+                return View(employees.Values);
+
+            }
         }
 
-        // POST: Employee/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        //GET(SINGLE): Employee Details
+        //Purpose: Excute SQL statement that gets single employee detail and returns value of of columns in of single row.
+        //Author: Aaron Miller 
+
+        public async Task<IActionResult> Details(int? id)
         {
-            try
+            if (id == null)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: Employee/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            string sql = $@"
+                SELECT 
+                    e.EmployeeId, 
+                    e.FirstName,
+                    e.LastName,
+                    d.DepartmentId,
+                    d.DepartmentName,
+                    c.ComputerId,
+                    c.Manufacturer,
+                    c.ModelName,
+                    t.TrainingProgramId,
+                    t.ProgramName,
+                    t.StartDate,
+                    t.EndDate
+                FROM Employee e
+                JOIN Department d ON e.DepartmentId = d.DepartmentId
+                LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.EmployeeId
+                LEFT JOIN Computer c ON ec.ComputerId = c.ComputerId
+                LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.EmployeeId
+                LEFT JOIN TrainingProgram t ON et.TrainingProgramId = t.TrainingProgramId
+                WHERE e.EmployeeId = { id } and ec.DateReturned is null;" ;
 
-        // POST: Employee/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            using (IDbConnection conn = Connection)
             {
-                return View();
+                Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
+                var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
+                   sql,
+                   (employee, department, computer, trainingProgram) =>
+                   {
+                       Employee employeeEntry;
+                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                       {
+                           employeeEntry = employee;
+                           employeeEntry.Computer = computer;
+                           employeeEntry.Department = department;
+
+                           employeeEntry.TrainingPrograms = new List<TrainingProgram>();
+                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                       }
+                       employeeEntry.TrainingPrograms.Add(trainingProgram);
+                       return employeeEntry;
+                   }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
+                   );
+       
+
+                return View(employeesQuery.Distinct().First());
             }
         }
     }

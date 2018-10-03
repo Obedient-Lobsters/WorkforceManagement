@@ -1,4 +1,4 @@
-﻿//Authors: Leah Gwin and William Kimball
+//Authors: Leah Gwin, William Kimball, and Aaron Miller
 //Purpose: Model for Employee
 
 using System;
@@ -15,11 +15,13 @@ namespace WorkforceManagement.Models
         public int EmployeeId { get; set; }
 
         [Required]
+
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
         [Display(Name = "Last Name")]
+
         public string LastName { get; set; }
 
         [Required]
@@ -38,9 +40,11 @@ namespace WorkforceManagement.Models
         [Required]
         public int DepartmentId { get; set; }
 
+        [Display(Name = "Department")]
         public Department Department { get; set; }
 
-        public Computer Computer { get; set; }
+        [Display(Name = "Assigned Computer")]
+        public Computer Computer { get; set; } = new Computer();
 
         [Display(Name = "Employee Name")]
         public string FullName
@@ -50,6 +54,9 @@ namespace WorkforceManagement.Models
                 return $"{FirstName} {LastName}";
             }
         }
+
+        [Display(Name = "Assigned Training Programs")]
+        public List<TrainingProgram> TrainingPrograms { get; set; } = new List<TrainingProgram>();
 
     }
 }
