@@ -178,7 +178,7 @@ namespace WorkforceManagement.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(nameof(Index));
+                    return View("DeleteDenied");
                 }
                 throw new Exception("Computer is currently or has been previously been assigned");
             }
