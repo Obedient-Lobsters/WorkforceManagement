@@ -216,13 +216,13 @@ INSERT INTO Department(DepartmentName,ExpenseBudget)
 VALUES( 
  'IT', 
 23400);
-INSERT INTO Employee(FirstName,LastName,Email, StartDate, Supervisor, DepartmentId)
+INSERT INTO Employee(FirstName,LastName,Email,Supervisor, StartDate, DepartmentId)
 VALUES( 
  'William', 
  'Kimball', 
 'wkkimball043@gmail.com',
-'2015/10/01', 
 1,
+'2015/10/01', 
 1);
 INSERT INTO Employee(FirstName,LastName,Email, StartDate, Supervisor, DepartmentId)
 VALUES(  
