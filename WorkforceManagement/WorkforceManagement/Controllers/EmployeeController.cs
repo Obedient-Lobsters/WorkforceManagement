@@ -115,11 +115,12 @@ namespace WorkforceManagement.Controllers
             {
                 string sql = $@"
                     INSERT INTO Employee
-                        ( FirstName, LastName, StartDate, DepartmentId, Supervisor)
+                        ( FirstName, LastName, Email, StartDate, DepartmentId, Supervisor)
                         VALUES
                         (  
                               '{employee.FirstName}'
                             , '{employee.LastName}'
+                            , '{employee.Email}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
                             , 0
