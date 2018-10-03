@@ -122,7 +122,8 @@ namespace WorkforceManagement.Controllers
                             , '{employee.LastName}'
                             , '{employee.StartDate}'
                             , '{employee.DepartmentId}'
-                            , 0                        )
+                            , 0
+)
                     ";
 
                 using (IDbConnection conn = Connection)
