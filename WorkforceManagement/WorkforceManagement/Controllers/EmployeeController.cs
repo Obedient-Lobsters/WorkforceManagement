@@ -54,7 +54,8 @@ namespace WorkforceManagement.Controllers
 
                 var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
                         sql,
-                        (employee, department) => {
+                        (employee, department) =>
+                        {
                             if (!employees.ContainsKey(employee.EmployeeId))
                             {
                                 employees[employee.EmployeeId] = employee;
@@ -68,78 +69,64 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+        //GET(SINGLE): Employee Details
+        //Purpose: Excute SQL statement that gets single employee detail and returns value of of columns in of single row.
+        //Author: Aaron Miller 
 
-        // GET: Employee/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
-        }
-
-        // POST: Employee/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
+            if (id == null)
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            string sql = $@"
+                SELECT 
+                    e.EmployeeId, 
+                    e.FirstName,
+                    e.LastName,
+                    d.DepartmentId,
+                    d.DepartmentName,
+                    c.ComputerId,
+                    c.Manufacturer,
+                    c.ModelName,
+                    t.TrainingProgramId,
+                    t.ProgramName,
+                    t.StartDate,
+                    t.EndDate
+                FROM Employee e
+                JOIN Department d ON e.DepartmentId = d.DepartmentId
+                LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.EmployeeId
+                LEFT JOIN Computer c ON ec.ComputerId = c.ComputerId
+                LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.EmployeeId
+                LEFT JOIN TrainingProgram t ON et.TrainingProgramId = t.TrainingProgramId
+                WHERE e.EmployeeId = { id };";
+
+
+            using (IDbConnection conn = Connection)
             {
-                return View();
-            }
-        }
+                Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
+                var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
+                   sql,
+                   (employee, department, computer, trainingProgram) =>
+                   {
+                       Employee employeeEntry;
+                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                       {
+                           employeeEntry = employee;
+                           employeeEntry.Computer = computer;
+                           employeeEntry.Department = department;
 
-        // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+                           employeeEntry.TrainingPrograms = new List<TrainingProgram>();
+                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                       }
+                       employeeEntry.TrainingPrograms.Add(trainingProgram);
+                       return employeeEntry;
+                   }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
+                   );
+       
 
-        // POST: Employee/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Employee/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Employee/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                return View(employeesQuery.Distinct().First());
             }
         }
     }
