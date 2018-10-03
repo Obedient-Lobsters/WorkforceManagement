@@ -81,40 +81,26 @@ namespace WorkforceManagement.Controllers
             }
 
             string sql = $@"
-   SELECT
-                e.EmployeeId,
-                e.FirstName,
-                e.LastName,
-                e.DepartmentId,
-				d.DepartmentId,
-				d.DepartmentName,
-				ec.EmployeeComputerId,
-				ec.EmployeeId,
-				ec.ComputerId,
-				ec.DateReturned,
-				c.ComputerId,
-				c.Manufacturer,
-				c.ModelName,
-				et.EmployeeId,
-				et.TrainingProgramId, 
-				tp.TrainingProgramId,
-				tp.ProgramName,
-				tp.StartDate,
-				tp.EndDate
-            FROM Employee e
-            JOIN Department d 
-			ON e.DepartmentId = d.DepartmentId
-			JOIN EmployeeComputer ec
-			ON e.EmployeeId= ec.EmployeeId
-			JOIN Computer c 
-			ON ec.ComputerId= c.ComputerId
-			JOIN EmployeeTraining et 
-			ON e.EmployeeId= et.EmployeeId
-			JOIN TrainingProgram tp 
-			ON et.TrainingProgramId= tp.TrainingProgramId
-            WHERE e.EmployeeId= { id } and (ec.DateReturned is null or ec.DateReturned='')";
-
-
+                SELECT 
+                    e.EmployeeId, 
+                    e.FirstName,
+                    e.LastName,
+                    d.DepartmentId,
+                    d.DepartmentName,
+                    c.ComputerId,
+                    c.Manufacturer,
+                    c.ModelName,
+                    t.TrainingProgramId,
+                    t.ProgramName,
+                    t.StartDate,
+                    t.EndDate
+                FROM Employee e
+                JOIN Department d ON e.DepartmentId = d.DepartmentId
+                LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.EmployeeId
+                LEFT JOIN Computer c ON ec.ComputerId = c.ComputerId
+                LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.EmployeeId
+                LEFT JOIN TrainingProgram t ON et.TrainingProgramId = t.TrainingProgramId
+                WHERE e.EmployeeId = { id };";
 
 
             using (IDbConnection conn = Connection)
