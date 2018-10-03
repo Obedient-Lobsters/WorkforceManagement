@@ -157,7 +157,7 @@ namespace WorkforceManagement.Controllers
         // POST: Computer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int ComputerId)
         {
 
             string sql = $@"
@@ -165,14 +165,14 @@ namespace WorkforceManagement.Controllers
                                  c.ComputerId
                           FROM EmployeeComputer ec
                           JOIN Computer c ON ec.ComputerId = c.ComputerId
-                          WHERE c.ComputerId = {id}";
+                          WHERE c.ComputerId = {ComputerId}";
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<object> rowsReturned = await conn.QueryAsync(sql);
                 int count = rowsReturned.Count();
                 if (count == 0)
                 {
-                    sql = $@"DELETE FROM Computer WHERE ComputerId = {id};";
+                    sql = $@"DELETE FROM Computer WHERE ComputerId = {ComputerId};";
                     int rowsAffected = await conn.ExecuteAsync(sql);
                     return RedirectToAction(nameof(Index));
                 }
