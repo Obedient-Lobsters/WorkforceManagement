@@ -69,12 +69,6 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         //Author: Leah Gwin
         //Purpose: Load Dropdown for Dept. Create
         private async Task<SelectList> DepartmentList(int? selected)
@@ -147,7 +141,7 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit (int id)
         {
 
             string sql = @"
