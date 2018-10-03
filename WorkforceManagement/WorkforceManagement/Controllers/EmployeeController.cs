@@ -108,14 +108,18 @@ namespace WorkforceManagement.Controllers
             }
 
             string sql = $@"
-                SELECT
+                SELECT TOP 1
                     e.EmployeeId,
                     e.FirstName,
                     e.LastName,
                     e.Email,
                     e.Supervisor,
                     e.DepartmentId,
+                    d.DepartmentId,
                     d.DepartmentName,
+                    ec.EmployeeComputerId,
+                    ec.ComputerId,
+                    ec.EmployeeId,
                     c.ComputerId,
                     c.ModelName,
                     c.Manufacturer,
@@ -125,7 +129,8 @@ namespace WorkforceManagement.Controllers
                 JOIN Department d on e.DepartmentId = d.DepartmentId
 				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
                 JOIN Computer c on ec.ComputerId = c.ComputerId
-                WHERE e.EmployeeId = {id}";
+                WHERE e.EmployeeId = {id}
+                ORDER BY DateReturned ASC;";
 
             string trainingProgSql = $@"
                     SELECT
@@ -145,22 +150,62 @@ namespace WorkforceManagement.Controllers
 
             using (IDbConnection conn = Connection)
             {
-                EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
+                   EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
+                Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
+                 var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, Employee>(
+                   sql,
+                   (employee, department, computer) =>
+                   {
+                       Employee employeeEntry;
+                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                       {
+                           employeeEntry = employee;
+                           employeeEntry.ComputerId = computer.ComputerId;
+                           employeeEntry.Computer = computer;
+                           employeeEntry.Department = department;
 
-                model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
-                    sql,
-                    (employee, department, computer) =>
-                    {
-                        employee.Department = department;
-                        employee.Computer = computer;
-                        employee.Computer.Manufacturer = computer.Manufacturer;
-                        employee.Computer.ModelName = computer.ModelName;
-                        return employee;
-                    }, splitOn: "DepartmentId,ComputerId"
-                )).Single();
+                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                       }
+                       return employeeEntry;
+                   }, splitOn: "EmployeeId,DepartmentId,ComputerId"
+                   );
+
+                model.Employee = employeesQuery.Distinct().Single();
 
 
-                
+
+                //using (IDbConnection conn = Connection)
+                //{
+                //    EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
+
+                //    var employeeDictionary = new Dictionary<int, Employee>();
+
+                //    model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
+                //        sql,
+                //        (employee, department, computer) =>
+                //        {
+
+                //            employee.Department = department;
+                //            employee.Computer = computer;
+
+
+                //if (employee.Computer.ModelName == null)
+                //{
+                //    employee.Computer.ModelName = computer.ModelName;
+                //}
+
+                //if (employee.Computer.Manufacturer == null)
+                //{
+                //    employee.Computer.Manufacturer = computer.Manufacturer;
+                //}
+                //employee.Computer.Manufacturer = computer.Manufacturer;
+                //employee.Computer.ModelName = computer.ModelName;
+                //        return employee;
+                //    }, splitOn: "DepartmentId,ComputerId"
+                //)).First();
+
+
+
                 var someStiff = (await conn.QueryAsync<TrainingProgram>(
                                 trainingProgSql));
 
@@ -180,10 +225,12 @@ namespace WorkforceManagement.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("Employee.Computer.ModelName");
+            ModelState.Remove("Employee.Computer.Manufacturer");
 
-          
-            DateTime currentDate = DateTime.Now;
-            var daySS = currentDate.ToShortDateString();
+            String currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+
 
             if (ModelState.IsValid)
             {
@@ -191,31 +238,32 @@ namespace WorkforceManagement.Controllers
                 UPDATE Employee
                 SET
                     LastName = '{model.Employee.LastName}',
-                    DepartmentId = '{model.Employee.DepartmentId}',
+                    DepartmentId = {model.Employee.DepartmentId}
 
-                WHERE EmployeeId = {id};
-               ";
+                WHERE EmployeeId = {id};";
 
 
                 using (IDbConnection conn = Connection)
                 {
                     string compSql = $@"
-                        SELECT EmployeeComputerId, DateAssigned, DateReturned, ComputerId, EmployeeId 
+                        SELECT TOP 1 EmployeeComputerId, DateAssigned, DateReturned, ComputerId, EmployeeId 
                         FROM EmployeeComputer 
-                        WHERE EmployeeId = {id} AND DateReturned IS NULL";
+                        WHERE EmployeeId = {id}
+						ORDER BY DateReturned ASC;";
 
                     Computer currentComp = conn.Query<Computer>(compSql).Single();
-                    if (model.Employee.ComputerId != currentComp.ComputerId)
-                    {
-                        sql += " UPDATE EmployeeComputer" +
-                            $"SET DateReturned = {daySS}" +
 
+                    if (model.Employee.ComputerId != currentComp.ComputerId)
+                    {       if (currentComp != null) {
+                            sql += " IF (OBJECT_ID('dbo.FK_ComputerEmployee', 'F') IS NOT NULL) BEGIN ALTER TABLE dbo.EmployeeComputer DROP CONSTRAINT FK_ComputerEmployee END UPDATE EmployeeComputer" +
+                                $" SET DateReturned = '{currentDate}' ";
+                        }
                             //will need to change this line to select employeecomputer id. Will screw up if com changed more than once.
-                            $"WHERE ComputerId = {model.Employee.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
+                        sql += $" WHERE ComputerId = {model.Employee.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
                             $" INSERT INTO EmployeeComputer " +
-                            $"(ComputerId, EmployeeId, DateAssigned) " +
-                            $"VALUES(" +
-                            $"'{model.Employee.ComputerId}' , '{model.Employee.EmployeeId}', {daySS})";
+                            $" (ComputerId, EmployeeId, DateAssigned)" +
+                            $" VALUES(" +
+                            $"'{model.Employee.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
                     }
                 }
 
