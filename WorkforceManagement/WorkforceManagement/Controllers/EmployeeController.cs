@@ -208,7 +208,7 @@ namespace WorkforceManagement.Controllers
                 LEFT JOIN Computer c ON ec.ComputerId = c.ComputerId
                 LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.EmployeeId
                 LEFT JOIN TrainingProgram t ON et.TrainingProgramId = t.TrainingProgramId
-                WHERE e.EmployeeId = { id };";
+                WHERE e.EmployeeId = { id } and ec.DateReturned is null;";
 
 
             using (IDbConnection conn = Connection)
