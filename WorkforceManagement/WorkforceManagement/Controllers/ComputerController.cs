@@ -40,6 +40,9 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
+        // Author: Evan Lusky
+        // Dapper runs the Insert and pulls the info from the form presented on the Razor view.
+        // So long as it works (rows affected > 0) it redirects back to the index, otherwise the form is reloaded.
         [HttpGet]
         public IActionResult Create()
         {

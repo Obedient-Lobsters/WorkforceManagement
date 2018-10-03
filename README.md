@@ -46,3 +46,7 @@ Human Resources can add a new department by clicking Create New link on the View
 ## Employee Index/List View
     To see the Employee Index view, click on the Employee tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for First Name Last Name and Department Name. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Employee, you should see a hyperlink for ```Detail``` and ```Edit```. Above the First Name column, there should be a hyperlink for ```Create New```. 
 
+## Computers
+
+### Create
+    From the Computers List, click the Create New link to show a form with corresponding computer input fields.  Once the fields have been filled use the submit button to create a new computer.  If successful you will be returned to the Computers list.
