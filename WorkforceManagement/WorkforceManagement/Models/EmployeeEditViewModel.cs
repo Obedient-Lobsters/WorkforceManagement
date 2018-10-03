@@ -91,26 +91,22 @@ namespace WorkforceManagement.Models.ViewModels
                     Value = "0"
                 });
 
-                List<TrainingProgram> trainingProgs = conn.Query<TrainingProgram>(TrainingProgSql).ToList();
+                //List<TrainingProgram> trainingProgs = conn.Query<TrainingProgram>(TrainingProgSql).ToList();
 
-                this.TrainingPrograms = trainingProgs
-                .Select(li => new SelectListItem
-                {
-                    Text = $"{li.ProgramName}",
-                    Value = li.TrainingProgramId.ToString()
-                }).ToList();
+                //this.TrainingPrograms = trainingProgs
+                //.Select(li => new SelectListItem
+                //{
+                //    Text = $"{li.ProgramName}",
+                //    Value = li.TrainingProgramId.ToString()
+                //}).ToList();
 
-                // Add a prompt so that the <select> element isn't blank
-                this.TrainingPrograms.Insert(0, new SelectListItem
-                {
-                    Text = "Choose Training Program...",
-                    Value = "0"
-                });
-                ////List<Exercise> Assignedexercises = (conn.Query<Exercise>(StudExerciseSql)).ToList();
-                ////this.Student.AssignedExercises = Assignedexercises.Select(li => new Exercise
-                ////{
-                ////    Id = li.Id
-                ////}).ToList();
+                //// Add a prompt so that the <select> element isn't blank
+                //this.TrainingPrograms.Insert(0, new SelectListItem
+                //{
+                //    Text = "Choose Training Program...",
+                //    Value = "0"
+                //});
+
             }
         }
     }

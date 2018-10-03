@@ -115,13 +115,12 @@ namespace WorkforceManagement.Controllers
                     e.Email,
                     e.Supervisor,
                     e.DepartmentId,
-                    d.DepartmentId,
                     d.DepartmentName,
                     c.ComputerId,
                     c.ModelName,
                     c.Manufacturer,
-                    ec.EmployeeId,
-                    ec.ComputerId
+                    c.DatePurchased,
+                    c.Working
                 FROM Employee e
                 JOIN Department d on e.DepartmentId = d.DepartmentId
 				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
@@ -154,8 +153,10 @@ namespace WorkforceManagement.Controllers
                     {
                         employee.Department = department;
                         employee.Computer = computer;
+                        employee.Computer.Manufacturer = computer.Manufacturer;
+                        employee.Computer.ModelName = computer.ModelName;
                         return employee;
-                    }, splitOn: "EmployeeId, DepartmentId, ComputerId"
+                    }, splitOn: "DepartmentId,ComputerId"
                 )).Single();
 
 
@@ -165,10 +166,6 @@ namespace WorkforceManagement.Controllers
 
 
                 model.Enrolled = someStiff.Select(progIds => progIds.TrainingProgramId).ToArray();
-
-                //model.SelectedExerciseIds = model.Student.AssignedExercises.Select(exercise => { exercise.Id } ;);
-
-
 
                 return View(model);
             }
@@ -184,10 +181,8 @@ namespace WorkforceManagement.Controllers
             }
 
 
-
+          
             DateTime currentDate = DateTime.Now;
-            var day = currentDate.Date;
-
             var daySS = currentDate.ToShortDateString();
 
             if (ModelState.IsValid)
@@ -201,10 +196,31 @@ namespace WorkforceManagement.Controllers
                 WHERE EmployeeId = {id};
                ";
 
-                //if (model.Employee.ComputerId == Employee.Computer.ComputerId)
 
-                //ComputerId = '{model.Employee.ComputerId}',
-                //    TrainingProgramId = '{model.Employee.TrainingProgram.TrainingProgramId}'
+                using (IDbConnection conn = Connection)
+                {
+                    string compSql = $@"
+                        SELECT EmployeeComputerId, DateAssigned, DateReturned, ComputerId, EmployeeId 
+                        FROM EmployeeComputer 
+                        WHERE EmployeeId = {id} AND DateReturned IS NULL";
+
+                    Computer currentComp = conn.Query<Computer>(compSql).Single();
+                    if (model.Employee.ComputerId != currentComp.ComputerId)
+                    {
+                        sql += " UPDATE EmployeeComputer" +
+                            $"SET DateReturned = {daySS}" +
+
+                            //will need to change this line to select employeecomputer id. Will screw up if com changed more than once.
+                            $"WHERE ComputerId = {model.Employee.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
+                            $" INSERT INTO EmployeeComputer " +
+                            $"(ComputerId, EmployeeId, DateAssigned) " +
+                            $"VALUES(" +
+                            $"'{model.Employee.ComputerId}' , '{model.Employee.EmployeeId}', {daySS})";
+                    }
+                }
+
+
+
 
                 using (IDbConnection conn = Connection)
                 {
