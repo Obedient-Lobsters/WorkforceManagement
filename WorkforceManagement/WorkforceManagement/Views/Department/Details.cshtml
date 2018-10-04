@@ -14,8 +14,10 @@
 <div>
     <h4>@Html.DisplayFor(model => model.DepartmentName)</h4>
     <hr />
-    
+            @if (Model.Employees.First() != null)
+            {
     <h5>Employees</h5>
+    
     <table class="table">
         <thead>
             <tr>
@@ -41,8 +43,8 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Employees)
-            {
+                @foreach (var item in Model.Employees)
+                {
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.EmployeeId)
@@ -62,14 +64,18 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.DepartmentId)
                     </td>
+      
                     <td>
-                        @Html.ActionLink("Edit", "Edit", "Employee", new { id=item.EmployeeId  }, null) |
-                        @Html.ActionLink("Details", "Details", "Employee", new {  id=item.EmployeeId }, null) 
+                        @Html.ActionLink("Edit", "Edit", "Employee", new { id = item.EmployeeId }, null) |
+                        @Html.ActionLink("Details", "Details", "Employee", new { id = item.EmployeeId }, null) 
                     </td>
+      
                 </tr>
+                
             }
         </tbody>
     </table>
+            }
     </div>
 <div>
     <a asp-action="Index">Back to List</a>
