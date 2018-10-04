@@ -14,7 +14,7 @@ using WorkforceManagement.Models;
 namespace WorkforceManagement.Models.ViewModels
 {
     public class EmployeeEditViewModel
-    {
+    { 
         public Employee Employee { get; set; } = new Employee();
 
 

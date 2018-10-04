@@ -217,39 +217,6 @@ namespace WorkforceManagement.Controllers
                 model.Employee = employeesQuery.Distinct().Single();
 
 
-
-                //using (IDbConnection conn = Connection)
-                //{
-                //    EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
-
-                //    var employeeDictionary = new Dictionary<int, Employee>();
-
-                //    model.Employee = (await conn.QueryAsync<Employee, Department, Computer, Employee>(
-                //        sql,
-                //        (employee, department, computer) =>
-                //        {
-
-                //            employee.Department = department;
-                //            employee.Computer = computer;
-
-
-                //if (employee.Computer.ModelName == null)
-                //{
-                //    employee.Computer.ModelName = computer.ModelName;
-                //}
-
-                //if (employee.Computer.Manufacturer == null)
-                //{
-                //    employee.Computer.Manufacturer = computer.Manufacturer;
-                //}
-                //employee.Computer.Manufacturer = computer.Manufacturer;
-                //employee.Computer.ModelName = computer.ModelName;
-                //        return employee;
-                //    }, splitOn: "DepartmentId,ComputerId"
-                //)).First();
-
-
-
                 var someStiff = (await conn.QueryAsync<TrainingProgram>(
                                 trainingProgSql));
 
@@ -311,6 +278,46 @@ namespace WorkforceManagement.Controllers
                             $" VALUES(" +
                             $"'{model.Employee.Computer.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
                     }
+
+                    Console.WriteLine(model.Enrolled);
+
+                    string trainingProgSql = $@"
+                        SELECT TrainingProgramId, EmployeeTrainingId, EmployeeId 
+                        FROM EmployeeTraining 
+                        WHERE EmployeeId = {id};";
+
+                    List<TrainingProgram> trainingProgs = conn.Query<TrainingProgram>(trainingProgSql).ToList();
+
+                    int[] preselected = trainingProgs.Select(progIds => progIds.TrainingProgramId).ToArray();
+
+                    var preselectedTP = new HashSet<int>(preselected);
+                    var newlySelectedTP = new HashSet<int>(model.Enrolled);
+
+                    //var toAdd = preselectedTP.Distinct<newlySelectedTP>;
+
+                    var toAdd = new HashSet<int>(newlySelectedTP.Except(preselectedTP));
+                    var toDelete = new HashSet<int>(preselectedTP.Except(newlySelectedTP));
+
+                    foreach (int tp in model.Enrolled) {
+                        if (toAdd != null)
+                        {
+
+                            //will need to change this line to select employeecomputer id.Will screw up if com changed more than once.
+                            foreach (int TPid in toAdd ) {
+                                sql += $" WHERE ComputerId = {currentComp.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
+                                    $" INSERT INTO EmployeeComputer " +
+                                    $" (ComputerId, EmployeeId, DateAssigned)" +
+                                    $" VALUES(" +
+                                    $"'{model.Employee.Computer.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
+                            }
+                        }
+                    if (toDelete != null)
+                        {
+
+                        }
+                    }
+
+
                 }
                 using (IDbConnection conn = Connection)
                 {
