@@ -70,12 +70,6 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         //Author: Leah Gwin
         //Purpose: Load Dropdown for Dept. Create
         private async Task<SelectList> DepartmentList(int? selected)
@@ -147,7 +141,7 @@ namespace WorkforceManagement.Controllers
                 return View(employee);
             }
         }
-                //Edit Employee
+        //Edit Employee
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -200,25 +194,25 @@ namespace WorkforceManagement.Controllers
 
             using (IDbConnection conn = Connection)
             {
-                   EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
+                EmployeeEditViewModel model = new EmployeeEditViewModel(_config);
                 Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
-                 var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, Employee>(
-                   sql,
-                   (employee, department, computer) =>
-                   {
-                       Employee employeeEntry;
-                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
-                       {
-                           employeeEntry = employee;
-                           employeeEntry.ComputerId = computer.ComputerId;
-                           employeeEntry.Computer = computer;
-                           employeeEntry.Department = department;
+                var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, Employee>(
+                  sql,
+                  (employee, department, computer) =>
+                  {
+                      Employee employeeEntry;
+                      if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                      {
+                          employeeEntry = employee;
+                          employeeEntry.ComputerId = computer.ComputerId;
+                          employeeEntry.Computer = computer;
+                          employeeEntry.Department = department;
 
-                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
-                       }
-                       return employeeEntry;
-                   }, splitOn: "EmployeeId,DepartmentId,ComputerId"
-                   );
+                          EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                      }
+                      return employeeEntry;
+                  }, splitOn: "EmployeeId,DepartmentId,ComputerId"
+                  );
 
                 model.Employee = employeesQuery.Distinct().Single();
 
@@ -304,22 +298,20 @@ namespace WorkforceManagement.Controllers
                     Computer currentComp = conn.Query<Computer>(compSql).Single();
 
                     if (model.Employee.Computer.ComputerId != currentComp.ComputerId)
-                    {       if (currentComp != null) {
+                    {
+                        if (currentComp != null)
+                        {
                             sql += " IF (OBJECT_ID('dbo.FK_ComputerEmployee', 'F') IS NOT NULL) BEGIN ALTER TABLE dbo.EmployeeComputer DROP CONSTRAINT FK_ComputerEmployee END UPDATE EmployeeComputer" +
                                 $" SET DateReturned = '{currentDate}' ";
                         }
-                            //will need to change this line to select employeecomputer id. Will screw up if com changed more than once.
-                        sql += $" WHERE ComputerId = {model.Employee.Computer.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
+                        //will need to change this line to select employeecomputer id. Will screw up if com changed more than once.
+                        sql += $" WHERE ComputerId = {currentComp.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
                             $" INSERT INTO EmployeeComputer " +
                             $" (ComputerId, EmployeeId, DateAssigned)" +
                             $" VALUES(" +
                             $"'{model.Employee.Computer.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
                     }
                 }
-
-
-
-
                 using (IDbConnection conn = Connection)
                 {
                     int rowsAffected = await conn.ExecuteAsync(sql);
@@ -335,27 +327,64 @@ namespace WorkforceManagement.Controllers
                 return new StatusCodeResult(StatusCodes.Status406NotAcceptable);
             }
         }
+        //GET(SINGLE): Employee Details
+        //Purpose: Excute SQL statement that gets single employee detail and returns value of of columns in of single row.
+        //Author: Aaron Miller 
 
-        // GET: Employee/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
-        }
-
-        // POST: Employee/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
+            if (id == null)
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            string sql = $@"
+                SELECT 
+                    e.EmployeeId, 
+                    e.FirstName,
+                    e.LastName,
+                    d.DepartmentId,
+                    d.DepartmentName,
+                    c.ComputerId,
+                    c.Manufacturer,
+                    c.ModelName,
+                    t.TrainingProgramId,
+                    t.ProgramName,
+                    t.StartDate,
+                    t.EndDate
+                FROM Employee e
+                JOIN Department d ON e.DepartmentId = d.DepartmentId
+                LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.EmployeeId
+                LEFT JOIN Computer c ON ec.ComputerId = c.ComputerId
+                LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.EmployeeId
+                LEFT JOIN TrainingProgram t ON et.TrainingProgramId = t.TrainingProgramId
+                WHERE e.EmployeeId = { id } and ec.DateReturned is null;" ;
+
+
+            using (IDbConnection conn = Connection)
             {
-                return View();
+                Dictionary<int, Employee> EmployeesDictionary = new Dictionary<int, Employee>();
+                var employeesQuery = await conn.QueryAsync<Employee, Department, Computer, TrainingProgram, Employee>(
+                   sql,
+                   (employee, department, computer, trainingProgram) =>
+                   {
+                       Employee employeeEntry;
+                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
+                       {
+                           employeeEntry = employee;
+                           employeeEntry.Computer = computer;
+                           employeeEntry.Department = department;
+
+                           employeeEntry.TrainingPrograms = new List<TrainingProgram>();
+                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
+                       }
+                       employeeEntry.TrainingPrograms.Add(trainingProgram);
+                       return employeeEntry;
+                   }, splitOn: "EmployeeId, DepartmentId, ComputerId, TrainingProgramId"
+                   );
+       
+
+                return View(employeesQuery.Distinct().First());
             }
         }
     }
