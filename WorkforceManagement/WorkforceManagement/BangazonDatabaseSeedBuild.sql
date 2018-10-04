@@ -216,13 +216,13 @@ INSERT INTO Department(DepartmentName,ExpenseBudget)
 VALUES( 
  'IT', 
 23400);
-INSERT INTO Employee(FirstName,LastName,Email, StartDate, Supervisor, DepartmentId)
+INSERT INTO Employee(FirstName,LastName,Email,Supervisor, StartDate, DepartmentId)
 VALUES( 
  'William', 
  'Kimball', 
 'wkkimball043@gmail.com',
-'2015/10/01', 
 1,
+'2015/10/01', 
 1);
 INSERT INTO Employee(FirstName,LastName,Email, StartDate, Supervisor, DepartmentId)
 VALUES(  
@@ -425,3 +425,16 @@ INSERT INTO ProductOrder (OrderId, ProductId)
 VALUES(
 3,
 3);
+INSERT INTO Computer(DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer)
+VALUES 
+(
+ '2018/10/01', 
+ null,
+0,
+'MacBook Pro',
+'Apple');
+INSERT INTO EmployeeComputer(DateAssigned,EmployeeId,ComputerId)
+VALUES(  
+'2010/04/20',  
+3,
+4);
