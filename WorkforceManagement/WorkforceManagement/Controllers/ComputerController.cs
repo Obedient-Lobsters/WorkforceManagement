@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
@@ -77,29 +75,41 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Computer/Create
-        public ActionResult Create()
+        // Author: Evan Lusky
+        // Dapper runs the Insert and pulls the info from the form presented on the Razor view.
+        // So long as it works (rows affected > 0) it redirects back to the index, otherwise the form is reloaded.
+        [HttpGet]
+        public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Computer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer")] Computer computer)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                string sql = $@"
+                    INSERT INTO Computer
+                        ( DatePurchased, DateDecommissioned, Working, ModelName, Manufacturer )
+                        VALUES
+                        ( '{computer.DatePurchased}', null, '{computer.Working}', '{computer.ModelName}', '{computer.Manufacturer}' )
+                    ";
 
-                return RedirectToAction(nameof(Index));
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(computer);
         }
-
 
         // GET: Computer/Delete/5
         //Author:Shuaib Sajid

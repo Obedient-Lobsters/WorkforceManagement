@@ -56,9 +56,14 @@ Human Resources can add a new employee by clicking "Create New" link on the View
 
 ## Computer
 
-## Computer Index/List View
-    To see the Computer Index view, click on the Computer tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for Make, Model and Working. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Computer, you should see a hyperlink for ```Detail``` and ```Delete```.  
+### Computer Index/List View
+To see the Computer Index view, click on the Computer tab in the navbar in the upper portion of the screen (while the app is running). If all is working correctly, you should see a nicely formatted table that has a column for Make, Model and Working. Each of these columns should be filled with the corresponding information that is sourced from the database. On the right of each row, for each Computer, you should see a hyperlink for ```Detail``` and ```Delete```.  
+
+### Create
+From the Computers List, click the Create New link to show a form with corresponding computer input fields.  Once the fields have been filled use the submit button to create a new computer.  If successful you will be returned to the Computers list.
 
 ### Details/View One Computer
 Click on the link "Details" one an indiviual computer in the Index view. The browser will show the details of the selected computer. The details will include the computer id, Date of purchase of the computer, date the computer was decommissioned if applicable, operation status as a checkbox, model and manufacturer.
-  
+
+### Delete Computer
+On the index view for all Computers page, click on the the delete link. The user will be shown a view with the computer details and will ask for confirmation of the delete. Once the user clicks on delete the computer is deleted and the user is taken back to the index view or if the computer is currently assigned or has been previously assign the delete is denied. The delete denied page has a gentle message describing the retriction and a link to return to index.
