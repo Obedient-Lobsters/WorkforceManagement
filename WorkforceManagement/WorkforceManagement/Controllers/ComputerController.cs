@@ -100,30 +100,10 @@ namespace WorkforceManagement.Controllers
             }
         }
 
-        // GET: Computer/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Computer/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         // GET: Computer/Delete/5
+        //Author:Shuaib Sajid
+        //Purpose: This method creates the model to display on Delete Confirm
         public async Task<IActionResult> DeleteConfirm(int? id)
         {
             if (id == null)
@@ -155,6 +135,8 @@ namespace WorkforceManagement.Controllers
 
 
         // POST: Computer/Delete/5
+        //Author:Shuaib Sajid Purpose:This method checks if the computer exists on the EmployeeComputer table
+        //If it does exist then it does not allow a delete, it if doesn't then a delete is allowed
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int ComputerId)
