@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -32,7 +32,7 @@ namespace WorkforceManagement.Controllers
             }
         }
         // GET: Employee
-        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they bolong to, and then send that information to the view that corresponds to the Employee model
+        // Purpose: Execute a sql statement that gets required information about an employee and the Department that they belong to, and then send that information to the view that corresponds to the Employee model
         // Author: William K. Kimball
         public async Task<IActionResult> Index()
         {
@@ -55,7 +55,8 @@ namespace WorkforceManagement.Controllers
 
                 var employeeQuerySet = await conn.QueryAsync<Employee, Department, Employee>(
                         sql,
-                        (employee, department) => {
+                        (employee, department) =>
+                        {
                             if (!employees.ContainsKey(employee.EmployeeId))
                             {
                                 employees[employee.EmployeeId] = employee;
@@ -75,30 +76,78 @@ namespace WorkforceManagement.Controllers
             return View();
         }
 
-        // GET: Employee/Create
-        public ActionResult Create()
+        //Author: Leah Gwin
+        //Purpose: Load Dropdown for Dept. Create
+        private async Task<SelectList> DepartmentList(int? selected)
         {
-            return View();
-        }
-
-        // POST: Employee/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
+            using (IDbConnection conn = Connection)
             {
-                // TODO: Add insert logic here
+                // Get all department data
+                List<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
 
-                return RedirectToAction(nameof(Index));
+                // Add a prompting department for dropdown
+                departments.Insert(0, new Department() { DepartmentId = 0, DepartmentName = "Select department..." });
+
+                // Generate SelectList from department
+                var selectList = new SelectList(departments, "DepartmentId", "DepartmentName", selected);
+                return selectList;
             }
-            catch
+        }
+        //Author: Leah Gwin
+        //Purpose: Enables the Dept list to be in the dropdown for post.
+        // GET: Employee/Create
+        public async Task<IActionResult> Create()
+        {
+            using (IDbConnection conn = Connection)
             {
+                ViewData["DepartmentId"] = await DepartmentList(null);
                 return View();
             }
         }
 
-        //Edit Employee
+        // POST: Employee/Create
+        //Author: Leah Gwin
+        //Purpose: For HR to be able to add a new employee 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Employee employee)
+        {
+
+            if (ModelState.IsValid)
+            {
+                string sql = $@"
+                    INSERT INTO Employee
+                        ( FirstName, LastName, Email, StartDate, DepartmentId, Supervisor)
+                        VALUES
+                        (  
+                              '{employee.FirstName}'
+                            , '{employee.LastName}'
+                            , '{employee.Email}'
+                            , '{employee.StartDate}'
+                            , '{employee.DepartmentId}'
+                            , 0
+)
+                    ";
+
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    if (rowsAffected > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+
+            //ModelState was invalid, or saving the Employee data failed. Show the form again.
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Department> departments = (await conn.QueryAsync<Department>("SELECT DepartmentId, DepartmentName FROM Department")).ToList();
+                ViewData["DepartmentId"] = await DepartmentList(employee.DepartmentId);
+                return View(employee);
+            }
+        }
+                //Edit Employee
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -120,6 +169,7 @@ namespace WorkforceManagement.Controllers
                     ec.EmployeeComputerId,
                     ec.ComputerId,
                     ec.EmployeeId,
+                    ec.DateReturned,
                     c.ComputerId,
                     c.ModelName,
                     c.Manufacturer,
@@ -253,17 +303,17 @@ namespace WorkforceManagement.Controllers
 
                     Computer currentComp = conn.Query<Computer>(compSql).Single();
 
-                    if (model.Employee.ComputerId != currentComp.ComputerId)
+                    if (model.Employee.Computer.ComputerId != currentComp.ComputerId)
                     {       if (currentComp != null) {
                             sql += " IF (OBJECT_ID('dbo.FK_ComputerEmployee', 'F') IS NOT NULL) BEGIN ALTER TABLE dbo.EmployeeComputer DROP CONSTRAINT FK_ComputerEmployee END UPDATE EmployeeComputer" +
                                 $" SET DateReturned = '{currentDate}' ";
                         }
                             //will need to change this line to select employeecomputer id. Will screw up if com changed more than once.
-                        sql += $" WHERE ComputerId = {model.Employee.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
+                        sql += $" WHERE ComputerId = {model.Employee.Computer.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
                             $" INSERT INTO EmployeeComputer " +
                             $" (ComputerId, EmployeeId, DateAssigned)" +
                             $" VALUES(" +
-                            $"'{model.Employee.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
+                            $"'{model.Employee.Computer.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
                     }
                 }
 

@@ -1,24 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using WorkforceManagement.Models;
 
 namespace WorkforceManagement.Controllers
 {
     public class ComputerController : Controller
     {
-        // GET: Computer
-        public ActionResult Index()
+        private readonly IConfiguration _config;
+
+        public ComputerController(IConfiguration config)
+
         {
-            return View();
+            _config = config;
+        }
+
+        public IDbConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
+        // Author: Evan Lusky
+        // Simple dapper query for Computer
+        // Returns and IEnumerable of Computer objects to pass to View.
+        public async Task<IActionResult> Index()
+        {
+            using (IDbConnection conn = Connection)
+            {
+                IEnumerable<Computer> computers = await conn.QueryAsync<Computer>(
+                    "select ComputerId, ModelName, Manufacturer, Working from Computer;"
+                );
+                return View(computers);
+            }
         }
 
         // GET: Computer/Details/5
-        public ActionResult Details(int id)
+        //Author: Shu Sajid
+        //Purpose:This provides the Details view with a Computer object with the DepartmentId {id}
+        //Since this dapper code returns an ienumerable and the Details view needs a single Department object we use Single() on the query.
+        public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+            SELECT
+                c.ComputerId,
+                c.DatePurchased,
+                c.DateDecommissioned,
+                c.Working,
+                c.ModelName,
+                c.Manufacturer
+            FROM Computer c
+            WHERE ComputerId = {id};";
+
+            using (IDbConnection conn = Connection)
+            {
+                Computer computerQuery = await conn.QuerySingleAsync<Computer>(sql);
+
+                if (computerQuery == null)
+                {
+                    return NotFound();
+                }
+                return View(computerQuery);
+            }
         }
 
         // GET: Computer/Create
