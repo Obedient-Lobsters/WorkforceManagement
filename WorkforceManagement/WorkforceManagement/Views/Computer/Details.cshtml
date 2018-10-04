@@ -32,7 +32,7 @@
         <dd>
             @Html.DisplayFor(model => model.DateDecommissioned)
         </dd>
-                   
+
         <dt>
             @Html.DisplayNameFor(model => model.Working)
         </dt>
@@ -53,6 +53,9 @@
             @Html.DisplayFor(model => model.Manufacturer)
         </dd>
     </dl>
+    <td>
+        @Html.ActionLink("Delete", "DeleteConfirm", new { id = Model.ComputerId })
+    </td>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>
