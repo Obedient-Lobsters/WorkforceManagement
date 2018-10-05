@@ -1,4 +1,4 @@
-﻿@*Author: William K. Kimball*@
+@*Author: William K. Kimball*@
 @*Purpose: Setup the index view that shows all of the employees with their names and departments*@
 @*Methods: *@
 
@@ -48,7 +48,7 @@
                         @Html.DisplayFor(modelItem => employee.Department.DepartmentName)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) 
+                        <a asp-action="Edit" asp-route-id="@employee.EmployeeId">Edit</a> |
                         <a asp-action="Details" asp-route-id="@employee.EmployeeId">Details</a>
                     </td>
                 </tr>
@@ -57,3 +57,4 @@
     </table>
 </body>
 </html>
+
