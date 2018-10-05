@@ -293,31 +293,27 @@ namespace WorkforceManagement.Controllers
                     var preselectedTP = new HashSet<int>(preselected);
                     var newlySelectedTP = new HashSet<int>(model.Enrolled);
 
-                    //var toAdd = preselectedTP.Distinct<newlySelectedTP>;
-
                     var toAdd = new HashSet<int>(newlySelectedTP.Except(preselectedTP));
                     var toDelete = new HashSet<int>(preselectedTP.Except(newlySelectedTP));
 
                     foreach (int tp in model.Enrolled) {
                         if (toAdd != null)
                         {
-
-                            //will need to change this line to select employeecomputer id.Will screw up if com changed more than once.
                             foreach (int TPid in toAdd ) {
-                                sql += $" WHERE ComputerId = {currentComp.ComputerId} AND EmployeeId = {model.Employee.EmployeeId};" +
-                                    $" INSERT INTO EmployeeComputer " +
-                                    $" (ComputerId, EmployeeId, DateAssigned)" +
-                                    $" VALUES(" +
-                                    $"'{model.Employee.Computer.ComputerId}' , '{model.Employee.EmployeeId}', '{currentDate}')";
+                                sql += $" INSERT INTO EmployeeTraining " +
+                                    $" (EmployeeId, TrainingProgramId)" +
+                            $" VALUES(" +
+                            $"'{model.Employee.EmployeeId}' , '{TPid}')";
                             }
                         }
-                    if (toDelete != null)
-                        {
-
+                        if (toDelete != null)
+                            {
+                                foreach(int TPDeleteId in toDelete)
+                                {
+                                    sql += $"DELETE FROM EmployeeTraining WHERE EmployeeId = {model.Employee.EmployeeId} AND TrainingProgramId = {TPDeleteId}";
+                                }
+                            }
                         }
-                    }
-
-
                 }
                 using (IDbConnection conn = Connection)
                 {
