@@ -170,9 +170,9 @@ namespace WorkforceManagement.Controllers
                     c.DatePurchased,
                     c.Working
                 FROM Employee e
-                JOIN Department d on e.DepartmentId = d.DepartmentId
-				JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
-                JOIN Computer c on ec.ComputerId = c.ComputerId
+                LEFT JOIN Department d on e.DepartmentId = d.DepartmentId
+				LEFT JOIN EmployeeComputer ec ON e.EmployeeId = ec.EmployeeId 
+                LEFT JOIN Computer c on ec.ComputerId = c.ComputerId
                 WHERE e.EmployeeId = {id}
                 ORDER BY DateReturned ASC;";
 
@@ -204,10 +204,12 @@ namespace WorkforceManagement.Controllers
                       if (!EmployeesDictionary.TryGetValue(employee.EmployeeId, out employeeEntry))
                       {
                           employeeEntry = employee;
-                          employeeEntry.ComputerId = computer.ComputerId;
-                          employeeEntry.Computer = computer;
-                          employeeEntry.Department = department;
-
+                          if (computer != null)
+                          {
+                              employeeEntry.ComputerId = computer.ComputerId;
+                              employeeEntry.Computer = computer;
+                              employeeEntry.Department = department;
+                          }
                           EmployeesDictionary.Add(employeeEntry.EmployeeId, employeeEntry);
                       }
                       return employeeEntry;
