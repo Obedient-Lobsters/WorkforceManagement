@@ -41,8 +41,13 @@ namespace WorkforceManagement.Models
         [Display(Name = "Department")]
         public Department Department { get; set; }
 
+        public int ComputerId { get; set; }
+
         [Display(Name = "Assigned Computer")]
         public Computer Computer { get; set; } = new Computer();
+
+
+        public TrainingProgram TrainingProgram { get; set; }
 
         [Display(Name = "Employee Name")]
         public string FullName
