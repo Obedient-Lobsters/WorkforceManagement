@@ -68,7 +68,7 @@ namespace WorkforceManagement.Controllers
 				e.Supervisor,
 				e.DepartmentId
             from Department as d
-            join Employee as e ON e.DepartmentId = d.DepartmentId
+            LEFT join Employee as e ON e.DepartmentId = d.DepartmentId
 			where d.DepartmentId = {id}";
 
             using (IDbConnection conn = Connection)
