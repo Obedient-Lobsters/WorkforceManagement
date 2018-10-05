@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using WorkforceManagement.Models;
@@ -112,51 +111,68 @@ namespace WorkforceManagement.Controllers
             return View(computer);
         }
 
-       
-
-        // GET: Computer/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Computer/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // GET: Computer/Delete/5
-        public ActionResult Delete(int id)
+        //Author:Shuaib Sajid
+        //Purpose: This method creates the model to display on Delete Confirm
+        public async Task<IActionResult> DeleteConfirm(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            string sql = $@"
+                          SELECT ec.ComputerId,
+                                 c.ComputerId,
+                                 c.DatePurchased,
+                                 c.DateDecommissioned,
+                                 c.Working,
+                                 c.ModelName,
+                                 c.Manufacturer
+                          FROM Computer c
+                          LEFT JOIN EmployeeComputer ec ON ec.ComputerId = c.ComputerId
+                          WHERE c.ComputerId = {id}";
+
+            using (IDbConnection conn = Connection)
+            {
+                Computer computer = await conn.QueryFirstAsync<Computer>(sql);
+
+                if (computer == null) return NotFound("Inside DeleteConfirm");
+
+                return View(computer);
+            }
         }
+
 
         // POST: Computer/Delete/5
-        [HttpPost]
+        //Author:Shuaib Sajid Purpose:This method checks if the computer exists on the EmployeeComputer table
+        //If it does exist then it does not allow a delete, it if doesn't then a delete is allowed
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int ComputerId)
         {
-            try
-            {
-                // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            string sql = $@"
+                          SELECT ec.ComputerId,
+                                 c.ComputerId
+                          FROM EmployeeComputer ec
+                          JOIN Computer c ON ec.ComputerId = c.ComputerId
+                          WHERE c.ComputerId = {ComputerId}";
+            using (IDbConnection conn = Connection)
             {
-                return View();
+                IEnumerable<object> rowsReturned = await conn.QueryAsync(sql);
+                int count = rowsReturned.Count();
+                if (count == 0)
+                {
+                    sql = $@"DELETE FROM Computer WHERE ComputerId = {ComputerId};";
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View("DeleteDenied");
+                }
+                throw new Exception("Computer is currently or has been previously been assigned");
             }
         }
     }

@@ -1,14 +1,13 @@
-﻿@*Author:Shu Sajid
-  Purpose:This View is based from the computer model and shows details for one computer.
-    A delete link will need to be add once delete method in controller is created*@
+﻿@*Author: Shuaib Sajid Purpose: View for Delete Confirm*@
 @model WorkforceManagement.Models.Computer
 
 @{
-    ViewData["Title"] = "Computer Details";
+    ViewData["Title"] = "DeleteConfirm";
 }
 
-<h2>Details of Computer</h2>
+<h2>DeleteConfrim</h2>
 
+<h3>Are you sure you want to delete this Computer?</h3>
 <div>
     <h4>Computer</h4>
     <hr />
@@ -28,15 +27,12 @@
         <dt>
             @Html.DisplayNameFor(model => model.DateDecommissioned)
         </dt>
-
         <dd>
             @Html.DisplayFor(model => model.DateDecommissioned)
         </dd>
-
         <dt>
             @Html.DisplayNameFor(model => model.Working)
         </dt>
-
         <dd>
             @Html.DisplayFor(model => model.Working)
         </dd>
@@ -53,10 +49,10 @@
             @Html.DisplayFor(model => model.Manufacturer)
         </dd>
     </dl>
-    <td>
-        @Html.ActionLink("Delete", "DeleteConfirm", new { id = Model.ComputerId })
-    </td>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ComputerId" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
 </div>
